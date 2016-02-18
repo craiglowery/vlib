@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="StringExpressionParser" default="generate_lexer" basedir=".">
+
+	<property name="lib" location="${basedir}/../../../../../../../lib"/>
+	<property name="cupJar" location="${lib}/java-cup-11b.jar"/>
+	<property name="jflexJar" location="${lib}/jflex-1.6.1.jar"/>
+	
+	<description>
+		Builds cup/jflex scanner for SQL conditions.
+	</description>
+	
+	<target name="generate_parser">
+		<java jar="${cupJar}" input="${basedir}/StringExpression.cup" fork="true" failonerror="true">
+			<arg value="-parser"/>
+			<arg value="StringExpressionParser"/>
+			<arg value="-symbols"/>
+			<arg value="StringExpressionSymbols"/>
+		</java>
+	</target>
+	
+	<target name="generate_lexer" depends="generate_parser">
+		<java jar="${jflexJar}" fork="true" failonerror="true">
+			<arg value="${basedir}/StringExpression.flex"/>
+		</java>
+	</target>
+	
+</project>

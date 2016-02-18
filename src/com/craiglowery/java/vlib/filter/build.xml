@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="SQLConditionParser" default="generate_lexer" basedir=".">
+	<property name="lib" location="/home/vlibrarian/workspace/Play/lib"/>
+	<property name="src" location="${basedir}"/>
+	<property name="classes" location="output"/>
+	<property name="cupJar" location="${lib}/java-cup-11b.jar"/>
+	<property name="jflexJar" location="${lib}/jflex-1.6.1.jar"/>
+	
+	<description>
+		Builds cup/jflex scanner for SQL conditions.
+	</description>
+	
+	<target name="generate_parser">
+		<java jar="${cupJar}" input="${basedir}/SQLCondition.cup" fork="true" failonerror="true"/>
+	</target>
+	
+	<target name="generate_lexer" depends="generate_parser">
+		<java jar="${jflexJar}" fork="true" failonerror="true">
+			<arg value="${basedir}/SQLCondition.flex"/>
+		</java>
+	</target>
+	
+</project>

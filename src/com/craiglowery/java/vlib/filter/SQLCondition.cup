@@ -1,0 +1,189 @@
+package com.craiglowery.java.vlib.filter;
+import java_cup.runtime.*;
+import java.util.TreeSet;
+
+
+parser code 
+	{:
+		private ExpressionFactory factory;
+		
+		public parser(
+			java_cup.runtime.Scanner s, 
+			ExpressionFactory factory
+			) 
+		{
+				super(s);
+				this.factory=factory;
+		}
+		
+		public void syntax_error(Symbol cur_token) 
+		{
+			throw new RuntimeException("ExprParsingException Wrapper",
+				new ExprParsingException("Syntax error",null,cur_token.left)
+				);
+		}
+
+	:};
+
+terminal ExpressionFactory.Operator COMPARISON_OPERATOR;
+terminal ExpressionFactory.Operator BOOLEAN_OR_OPERATOR;
+terminal ExpressionFactory.Operator BOOLEAN_AND_OPERATOR;
+terminal ExpressionFactory.Operator BOOLEAN_NOT_OPERATOR;
+terminal OPEN_PAREN_TOKEN;
+terminal CLOSE_PAREN_TOKEN;
+terminal OPEN_BRACKET_TOKEN;
+terminal CLOSE_BRACKET_TOKEN;			
+terminal TRUE_TOKEN;
+terminal FALSE_TOKEN;
+terminal COMMA_TOKEN;	
+
+terminal String ATTRIBUTE_NAME_STRING;
+
+terminal String GENERAL_VALUE_STRING;		
+terminal Double GENERAL_VALUE_DOUBLE;
+terminal Long GENERAL_VALUE_INTEGER;
+terminal String TIMESTAMP_VALUE_STRING;
+
+non terminal ExpressionFactory.Expr expression;
+non terminal ExpressionFactory.TagLiteralExpr tag_literal_expression;	
+non terminal TreeSet<String> tag_value_list;	
+
+precedence left BOOLEAN_OR_OPERATOR;
+precedence left BOOLEAN_AND_OPERATOR;
+precedence left BOOLEAN_NOT_OPERATOR;
+precedence nonassoc COMPARISON_OPERATOR;
+
+
+start with expression;
+
+expression ::=	
+				OPEN_PAREN_TOKEN expression:e CLOSE_PAREN_TOKEN
+					{: RESULT = e; :}
+				|
+				BOOLEAN_NOT_OPERATOR:op expression:e
+					{:
+					try {
+						RESULT = factory.createUnaryOperation(op,e);
+					} catch (ExprException ex) {
+						throw new ExprParsingException(ex.getMessage(),null,opleft);
+					}
+					:}
+				|
+				ATTRIBUTE_NAME_STRING:name
+					{:
+					try {
+						RESULT = factory.createAttribute(name);
+					} catch (ExprException ex) {
+						throw new ExprParsingException(ex.getMessage(),null,nameleft);
+					}
+					:}
+				|
+				TRUE_TOKEN 
+					{:
+					RESULT = factory.new BooleanLiteralExpr(true); 
+					:}
+				|
+				FALSE_TOKEN
+					{: 
+					RESULT = factory.new BooleanLiteralExpr(false); 
+					:}
+				|
+				GENERAL_VALUE_DOUBLE:d 
+					{: 
+					RESULT = factory.new DoubleLiteralExpr(d);
+					:}
+				|
+				GENERAL_VALUE_INTEGER:i 
+					{: 
+					RESULT = factory.new IntegerLiteralExpr(i); 
+					:}
+				|
+				GENERAL_VALUE_STRING:s 
+					{: 
+					RESULT = factory.new StringLiteralExpr(s); 
+					:}
+				|
+				TIMESTAMP_VALUE_STRING:s
+					{:
+					s=s.trim();
+					if (s.equals(""))
+						RESULT = factory.new TimeStampLiteralExpr();
+					else
+						RESULT = factory.new TimeStampLiteralExpr(s);
+					:}
+				|
+				tag_literal_expression:e 
+					{: 
+					RESULT = e; 
+					:}
+				|
+				expression:e1 COMPARISON_OPERATOR:op expression:e2
+					{:
+					try {
+						RESULT = factory.createBinaryOperation(e1,op,e2);
+					} catch (ExprException ex) {
+						throw new ExprParsingException(ex.getMessage(),null,opleft);
+					}
+					:}
+				|
+				expression:e1 BOOLEAN_AND_OPERATOR:op expression:e2
+					{:
+					try {
+						RESULT = factory.createBinaryOperation(e1,op,e2);
+					} catch (ExprException ex) {
+						throw new ExprParsingException(ex.getMessage(),null,opleft);
+					}
+					:}
+				|
+				expression:e1 BOOLEAN_OR_OPERATOR:op expression:e2
+					{:
+					try {
+						RESULT = factory.createBinaryOperation(e1,op,e2);
+					} catch (ExprException ex) {
+						throw new ExprParsingException(ex.getMessage(),null,opleft);
+					}
+					:}
+				;
+				
+tag_literal_expression ::=
+				OPEN_BRACKET_TOKEN tag_value_list:tset CLOSE_BRACKET_TOKEN
+					{:
+					RESULT = factory.new TagLiteralExpr(new TagType(tset));
+					:} 
+				;
+
+tag_value_list ::=
+				tag_value_list:tset COMMA_TOKEN GENERAL_VALUE_STRING:s  
+					{:
+					try {
+						tset.add(s);
+						RESULT = tset;
+					} catch (Exception ex) {
+						throw new ExprParsingException("Unable to add value to tag set",null,sleft);
+					}
+					:}
+				|
+				GENERAL_VALUE_STRING:s
+					{:
+					try {
+						TreeSet<String> tset = new TreeSet<String>();
+						tset.add(s);
+						RESULT = tset;
+					} catch (Exception ex) {
+						throw new RuntimeException("ExprException Wrapper",
+						new ExprException(String.format("Unable to add item to TreeSet (2) '%s'",s),ex)
+						);
+					}
+					:}
+				|
+					{:
+					try {
+						RESULT = new TreeSet<String>();
+					} catch (Exception ex) {
+						throw new RuntimeException("ExprException Wrapper",
+						new ExprException("Unable to instantiate empty TreeSet",ex)
+						);
+					}
+					:}
+				;
+				

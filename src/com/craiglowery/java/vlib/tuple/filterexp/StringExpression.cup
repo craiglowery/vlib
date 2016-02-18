@@ -1,0 +1,81 @@
+package com.craiglowery.java.vlib.tuple.filterexp;
+import java_cup.runtime.*;
+
+
+parser code 
+	{:
+		String inputString = "---input string not known---";
+		java.util.List<String> errorList = null;
+	
+		ExpressionFactory ef;
+		public StringExpressionParser(String s, ExpressionFactory ef, java.util.List<String> errors) {
+			super(new StringExpressionScanner(new java.io.StringReader(s)));
+			inputString = s;
+			this.ef = ef;
+			errorList = errors;
+		}
+		
+		public class ParserException extends FilterExpressionException {
+			Object info;
+			public ParserException(String message, Object info) {
+				super(message);
+				this.info = info;
+			}		
+		} 
+		
+		public void report_error(String message, Object info) {
+			errorList.add(String.format("%s: %s",message,info==null?"no additional information":info.toString()));
+		}
+		
+		public void report_fatal_error(String message, Object info) {
+			report_error(message,info);
+			done_parsing();
+		}
+
+
+	:};
+
+terminal String 	COMPARISON_OPERATOR, AND_OPERATOR, OR_OPERATOR;
+terminal String 	ATTRIBUTE;
+terminal 			OPENPAREN, CLOSEPAREN, NOT_OPERATOR, TRUE, FALSE;
+terminal String 	STRING;
+terminal Long	 	INTEGER;
+terminal Double 	DOUBLE; 
+
+non terminal ExpressionFactory.Node expression;
+
+precedence left AND_OPERATOR, OR_OPERATOR;
+precedence left COMPARISON_OPERATOR;
+precedence left NOT_OPERATOR;
+
+
+expression ::=
+				expression:e1 COMPARISON_OPERATOR:op expression:e2
+				{: RESULT = ef.comp(e1,op,e2); :}
+				|
+				expression:e1 AND_OPERATOR:op expression:e2
+				{: RESULT = ef.and(e1,e2); :}
+				|
+				expression:e1 OR_OPERATOR:op expression:e2
+				{: RESULT = ef.or(e1,e2); :}
+				|
+				OPENPAREN expression:e1 CLOSEPAREN
+				{: RESULT = e1; :}
+				|
+				NOT_OPERATOR expression:e
+				{: RESULT = ef.not(e); :}
+				|
+				ATTRIBUTE:e 
+				{:  RESULT = ef.attribute(e); :}
+				|
+				TRUE :e {: RESULT = ef.litBoolean(true); :}
+				|
+				FALSE :e {: RESULT = ef.litBoolean(false); :}
+				|
+				STRING:e {: RESULT = ef.litString(e); :}
+				|
+				INTEGER:e {: RESULT = ef.litLong(e); :}
+				|
+				DOUBLE:e {: RESULT = ef.litDouble(e); :}
+				
+				;
