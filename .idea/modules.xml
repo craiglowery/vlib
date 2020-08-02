@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ObjectEditor/ObjectEditor.iml" filepath="$PROJECT_DIR$/ObjectEditor/ObjectEditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vlib.iml" filepath="$PROJECT_DIR$/vlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LAUNCHERS/vlibedit/vlibedit.iml" filepath="$PROJECT_DIR$/LAUNCHERS/vlibedit/vlibedit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vlibedit/vlibedit.iml" filepath="$PROJECT_DIR$/vlibedit/vlibedit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" filepath="$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" />
+    </modules>
+  </component>
+</project>

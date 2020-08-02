@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.GridPane?>
+<GridPane fx:id="gridPane_ROOT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+          prefWidth="1400.0" stylesheets="@../core/Main.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.craiglowery.java.vlib.clients.upload.SelectFromQueryController">
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10" />
+    </padding>
+
+    <ListView fx:id="listView_Titles" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+    </ListView>
+
+</GridPane>

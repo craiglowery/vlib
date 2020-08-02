@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane fx:id="gp_ROOT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="600.0" prefWidth="1400.0" stylesheets="@../core/Main.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.craiglowery.java.vlib.clients.editor.ObjectEditorController">
+
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <ComboBox fx:id="cbExpression" prefWidth="500"/>
+        <Button fx:id="btLoad" text="Load" />
+        <Button fx:id="btUpdate" text="Update" />
+        <Button fx:id="btRevert" text="Revert" />
+        <Button fx:id="btCancel" text="Cancel" />
+        <Label fx:id="lbQuick" HBox.hgrow="ALWAYS" maxWidth="1000"/>
+        <Label HBox.hgrow="ALWAYS" maxWidth="1000"/>
+        <Button fx:id="btAddTagColumn" text="Add Tag Column"/>
+    </HBox>
+    <TableView fx:id="tvVideos" prefHeight="526.0" prefWidth="1220.0" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+    <Label fx:id="lbStatus" text="Sample text" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"/>
+    <HBox GridPane.rowIndex="3" GridPane.columnIndex="0">
+        <Label fx:id="lbConnectedTo"/>
+        <Label text="       "/>
+        <Label text="Number of Records: "/>
+        <Label fx:id="lbNumberOfRecords" text="0"/>
+        <Label text="      Modified: "/>
+        <Label fx:id="lbModifiedRecords" text="0"/>
+    </HBox>
+    <ProgressBar fx:id="progressIndicator" GridPane.rowIndex="3" GridPane.columnIndex="0" maxWidth="Infinity" GridPane.hgrow="ALWAYS" visible="false" />
+
+</GridPane>
