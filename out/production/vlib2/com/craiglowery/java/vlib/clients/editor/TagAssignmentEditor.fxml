@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane fx:id="gpRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="600.0" prefWidth="400.0" stylesheets="@../core/Main.css"
+          xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.craiglowery.java.vlib.clients.editor.TagAssignmentEditorController">
+
+    <TilePane prefColumns="3" prefRows="1" GridPane.hgrow="ALWAYS">
+        <Button fx:id="btAutoNumber" HBox.hgrow="ALWAYS">AutoNumber</Button>
+        <Button fx:id="btClear" HBox.hgrow="ALWAYS">Clear</Button>
+        <Button fx:id="btCancel" HBox.hgrow="ALWAYS">Cancel</Button>
+        <Button fx:id="btOk" HBox.hgrow="ALWAYS">Ok</Button>
+      <GridPane.margin>
+         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </GridPane.margin>
+    </TilePane>
+    <ScrollPane GridPane.rowIndex="1">
+        <VBox fx:id="vbTags">
+        </VBox>
+    </ScrollPane>
+    <HBox GridPane.rowIndex="2" GridPane.hgrow="ALWAYS">
+        <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </GridPane.margin>
+        <Button fx:id="btAdd">+</Button>
+        <TextField fx:id="tfValue" HBox.hgrow="ALWAYS"></TextField>
+    </HBox>
+
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+       <RowConstraints />
+   </rowConstraints>
+
+</GridPane>

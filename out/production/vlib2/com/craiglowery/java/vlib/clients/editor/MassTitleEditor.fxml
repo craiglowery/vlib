@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="368.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.craiglowery.java.vlib.clients.editor.MassTitleEditorController">
+   <children>
+      <Label layoutX="24.0" layoutY="13.0" text="Regular Expression:" />
+      <Label layoutX="24.0" layoutY="45.0" text="Replacement Expression:" />
+      <TextField fx:id="tfRegularExpression" layoutX="177.0" layoutY="9.0" prefHeight="25.0" prefWidth="405.0" />
+      <TextField fx:id="tfReplacementExpression" layoutX="177.0" layoutY="41.0" prefHeight="25.0" prefWidth="405.0" />
+      <Button fx:id="buttonOK" layoutX="530.0" layoutY="73.0" mnemonicParsing="false" text="OK" />
+      <Button fx:id="buttonUndo" layoutX="177.0" layoutY="73.0" mnemonicParsing="false" text="Undo" />
+      <Button fx:id="buttonCancel" layoutX="438.0" layoutY="73.0" mnemonicParsing="false" text="Cancel" />
+      <Button fx:id="buttonClear" layoutX="33.0" layoutY="73.0" mnemonicParsing="false" text="Clear" />
+      <Button fx:id="buttonApply" layoutX="233.0" layoutY="73.0" mnemonicParsing="false" text="Apply" />
+      <TableView fx:id="tvComparison"
+                 AnchorPane.topAnchor="120"
+                 AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <columns>
+          <TableColumn prefWidth="117.0" text="C1" />
+          <TableColumn minWidth="0.0" prefWidth="504.0" text="C2" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

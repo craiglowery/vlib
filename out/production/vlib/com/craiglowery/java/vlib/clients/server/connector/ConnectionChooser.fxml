@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<BorderPane fx:id="bpRoot" maxHeight="-Infinity" maxWidth="-Infinity"
+            stylesheets="@../core/Main.css" xmlns="http://javafx.com/javafx/8.0.112"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.craiglowery.java.vlib.clients.server.connector.ConnectionChooserController">
+    <top>
+        <Label text="Choose a server connection profile:">
+         <BorderPane.margin>
+            <Insets top="10.0" left ="10.0" bottom="10.0"/>
+         </BorderPane.margin>
+        </Label>
+    </top>
+      <center>
+          <ChoiceBox fx:id="cbProfile" prefWidth="400.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+          </ChoiceBox>
+
+      </center>
+      <bottom>
+          <Button fx:id="btOk" BorderPane.alignment="BOTTOM_RIGHT" text="Ok" prefWidth="100" prefHeight="50">
+              <BorderPane.margin>
+              <Insets right="10" bottom="20" top="10"/>
+              </BorderPane.margin>
+          </Button>
+      </bottom>
+    </BorderPane>

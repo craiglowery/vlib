@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<SplitPane fx:id="gridPane_ROOT" dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1400.0" stylesheets="@../core/Main.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.craiglowery.java.vlib.clients.upload.UploadController">
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10" />
+    </padding>
+
+
+    <items>
+
+        <!-- LEFT HALF -->
+        <GridPane prefHeight="560.0" prefWidth="690.0">
+            <hgap>20</hgap>
+            <vgap>20</vgap>
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <children>
+                <!-- ROW 0 -->
+                <Label text="Filename:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="textField_Filename" prefWidth="500" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+
+                <!-- ROW 1-->
+                <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="textField_Title" prefWidth="500" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+
+                <!-- ROW 2 -->
+                <Label minHeight="30" text="Handle:" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="textField_Handle" maxWidth="100" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">
+                    <CheckBox fx:id="checkBox_DuplicateCheck" selected="true" text="Duplicate check" />
+                    <HBox minWidth="10" />
+                    <Button fx:id="button_Search" prefHeight="25.0" prefWidth="133.0">Search</Button>
+                    <HBox minWidth="10" />
+                    <CheckBox fx:id="checkBox_AutoSearch" selected="true" text="Auto search" />
+                </HBox>
+                <!--ROW 3-->
+                <Label fx:id="label_HandleRefersToTitle" text="title" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+                <!-- ROW 4 -->
+                <Button fx:id="button_PromoteTitle" GridPane.columnIndex="0" GridPane.rowIndex="4">Promote Title</Button>
+                <Button fx:id="button_CleanTitle" GridPane.columnIndex="1" GridPane.rowIndex="4">Clean Title</Button>
+                <HBox GridPane.columnIndex="2" GridPane.rowIndex="4">
+                    <Button fx:id="button_Infer">Infer Values</Button>
+                    <HBox minWidth="10" />
+                    <ChoiceBox fx:id="cBox_InferValues" HBox.hgrow="ALWAYS" />
+                </HBox>
+                <!-- ROW 5 -->
+                <VBox alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                    <HBox>
+                        <Button fx:id="button_Upload" prefWidth="100">Upload</Button>
+                        <HBox minWidth="10" />
+                        <Button fx:id="button_Skip" prefWidth="100">Skip</Button>
+                        <HBox minWidth="10" />
+                        <GridPane>
+                            <HBox fx:id="hbox_ConnectedNext">
+                                <Button fx:id="button_NextOnQueue">Next</Button>
+                                <HBox minWidth="10"/>
+                                <Label fx:id="lbConnectedTo" />
+                            </HBox>
+                            <ProgressBar fx:id="progressIndicator_Upload" prefWidth="400" />
+
+                     <columnConstraints>
+                        <ColumnConstraints />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints />
+                     </rowConstraints>
+                        </GridPane>
+                    </HBox>
+                    <Text fx:id="label_Status" styleClass="status" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        The current status will be reported here</Text>
+                </VBox>
+
+                <!-- ROW 6 -->
+                <TextArea fx:id="textArea_Log" prefHeight="400.0" prefWidth="300.0" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+
+            </children>
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+        </GridPane>
+
+        <!-- RIGHT HALF -->
+        <GridPane>
+            <hgap>20</hgap>
+            <vgap>20</vgap>
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+            <columnConstraints>
+                <ColumnConstraints percentWidth="20" />
+                <ColumnConstraints percentWidth="30" />
+                <ColumnConstraints percentWidth="15" />
+                <ColumnConstraints percentWidth="35" />
+            </columnConstraints>
+            <children>
+                <ListView fx:id="listView_TagNames" editable="false" prefHeight="1000" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <ListView fx:id="listView_Values" editable="false" prefHeight="1000" />
+                    <Label />
+                    <HBox><TextField fx:id="textField_Value" /><Button fx:id="button_ForceAdd">+</Button></HBox>
+                </VBox>
+                <VBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <ProgressIndicator fx:id="progressIndicator_Tagop" />
+                    <VBox minHeight="20" />
+                    <Button fx:id="button_Add" minWidth="100">>></Button>
+                    <VBox minHeight="20" />
+                    <Button fx:id="button_Remove" minWidth="100" text="&lt;&lt;" />
+                    <VBox minHeight="20" />
+                    <Button fx:id="button_Clear" minWidth="100">Clear</Button>
+                </VBox>
+                <ListView fx:id="listView_Pairs" editable="false" prefHeight="1000" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+            </children>
+            <rowConstraints>
+                <RowConstraints />
+            </rowConstraints>
+
+        </GridPane>
+
+    </items>
+
+
+</SplitPane>
