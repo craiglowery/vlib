@@ -6,51 +6,25 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Functioning VLIB before work to create upload queue.">
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/TestStatus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/apps/TestJobQueue.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/jobtest/JobQueue.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/jobtest/JobQueueController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/upload/QueueManager.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/upload/QueueManagerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/vlibedit_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/vlibupload_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Java_FX_lib.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Java_FX_lib.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/BackgroundWorker.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/Job$Status.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/Job.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/Job.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$CommandExtender.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$QueueStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$QueueStatus.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$jobIterator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager$jobIterator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/jobmgr/JobManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/core/NameValuePair.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/core/NameValuePair.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditor.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditor.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController$6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/upload/UploadController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/common/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/BackgroundWorker.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/Job.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/Job.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/JobManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/JobManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/NameValuePair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/NameValuePair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditor.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditor.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/upload/UploadController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/upload/UploadController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vlib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/vlib.iml" afterDir="false" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Mass upload directories working. Before tvdb additions.">
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/ExecuteUponReturn.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/NameValuePairList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/jobtest/KVP.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/jobtest/r53.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibRepositoryResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJob.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJobManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJobResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJobStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJob_GetTagNames.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJob_GetTagValues.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerJob_UploadObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerLogger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/VlibServerProfile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -412,6 +386,7 @@
       <workItem from="1605031816653" duration="14297000" />
       <workItem from="1605560201031" duration="2032000" />
       <workItem from="1605725676078" duration="732000" />
+      <workItem from="1605896466799" duration="435000" />
     </task>
     <task id="LOCAL-00001" summary="Functioning VLIB before work to create upload queue.">
       <created>1596393194411</created>
@@ -434,7 +409,14 @@
       <option name="project" value="LOCAL" />
       <updated>1596579588883</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Mass upload directories working. Before tvdb additions.">
+      <created>1605896580558</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1605896580558</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -444,7 +426,8 @@
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <MESSAGE value="Functioning VLIB before work to create upload queue." />
-    <option name="LAST_COMMIT_MESSAGE" value="Functioning VLIB before work to create upload queue." />
+    <MESSAGE value="Mass upload directories working. Before tvdb additions." />
+    <option name="LAST_COMMIT_MESSAGE" value="Mass upload directories working. Before tvdb additions." />
   </component>
   <component name="WindowStateProjectService">
     <state x="711" y="351" key="#Notifications" timestamp="1599414379655">
@@ -483,6 +466,10 @@
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
     <state x="2050" y="235" width="1014" height="642" key="#xdebugger.evaluate/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605220872543" />
+    <state x="524" y="88" key="CommitChangelistDialog2" timestamp="1605896617876">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="524" y="88" key="CommitChangelistDialog2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605896617876" />
     <state x="740" y="275" width="694" height="674" key="FileChooserDialogImpl" timestamp="1605565246321">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -555,6 +542,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="94" key="SettingsEditor/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1604522969895" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1605896670538">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605896670538" />
     <state x="664" y="411" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1600800899261">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- POST /2013-04-01/hostedzone/Z12DZKR339HX0R/rrset HTTP/1.1 -->
+<ChangeResourceRecordSetsRequest xmlns="https://route53.amazonaws.com/doc/2013-04-01/">
+    <ChangeBatch>
+        <Comment>Updates dynamic DNS record</Comment>
+        <Changes>
+            <Change>
+                <Action>UPSERT</Action>
+                <ResourceRecordSet>
+                    <Name>cedarmanor.craiglowery.com</Name>
+                    <Type>A</Type>
+                    <TTL>300</TTL>
+                    <ResourceRecords>
+                        <ResourceRecord>
+                            <Value>192.168.1.245</Value>
+                        </ResourceRecord>
+                        ...
+                    </ResourceRecords>
+                </ResourceRecordSet>
+            </Change>
+        </Changes>
+    </ChangeBatch>
+</ChangeResourceRecordSetsRequest>
