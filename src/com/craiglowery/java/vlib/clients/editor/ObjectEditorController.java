@@ -649,7 +649,7 @@ public class ObjectEditorController implements Initializable, Observer {
             int row = tp.getRow();
             ObservableList<Video> allvids = tvVideos.getItems();
             String[] cmdArray = new String[2];
-            cmdArray[0]="c:\\Program Files (x86)\\SMPlayer\\smplayer.exe";
+            cmdArray[0]="c:\\Program Files\\SMPlayer\\smplayer.exe";
             //cmdArray[1] = getVideoAsURI(allvids.get(row).getHandle());
             cmdArray[1] = getVideoAsSMB(allvids.get(row).getHandle());
             if (cmdArray[1]==null)

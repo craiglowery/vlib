@@ -224,7 +224,7 @@ public class UploadController implements Initializable {
         listView_TagNames.getSelectionModel().selectedItemProperty().addListener(
           (observable, oldValue, newValue) -> retrievTagValues(listView_TagNames.getSelectionModel().getSelectedItem()));
         prefs = Preferences.userRoot().node(this.getClass().getPackage().getName());
-        loadPairsPrefrences();
+        loadPairsPreferences();
     }
 
     private  Set<Button> makeButtonSet(Button...buttons) {
@@ -328,7 +328,7 @@ public class UploadController implements Initializable {
         storePairsPreferences();
     }
 
-    private boolean loadPairsPrefrences() {
+    private boolean loadPairsPreferences() {
         try {
             List<NameValuePair> pairs = listView_Pairs.getItems();
             pairs.clear();
@@ -558,6 +558,99 @@ public class UploadController implements Initializable {
         //Check if there are tags defined
         if (listView_Pairs.getItems().size()==0 && !confirmYesOrNo("There are no tag assignments. Upload anyway?"))
                 return;
+
+        //Disable the upload button and all the fields
+        setUploadControlsEnabled(false);
+
+        //Show the progress indicator in an indeterminate state
+        progressIndicator_Upload.setVisible(true);
+        progressIndicator_Upload.setProgress(-1);
+        hbox_ConnectedNext.setVisible(false);
+
+        //Create the task
+        ServerConnectorTask<ServerResponse<UploadResult>> uploadTask =
+                serverConnector.createFileUploadTask(
+                        textField_Filename.getText(),
+                        textField_Title.getText(),
+                        contenttype,
+                        textField_Handle.getText(),
+                        checkBox_DuplicateCheck.isSelected(),
+                        listView_Pairs.getItems(),
+                        true  /* autocreate */);
+
+        //Set up a listener for progress bar of the task to update once a second
+        Timeline progressPoll = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                progressIndicator_Upload.setProgress(uploadTask.getProgress());
+                status(uploadTask.getMessage());
+            }
+        }));
+        progressPoll.setCycleCount(Timeline.INDEFINITE);
+
+        //Set up listeners for when the background thread completes.
+        java.util.function.BiConsumer<WorkerStateEvent,Boolean>cleanup = (event, succeeded) -> {
+            progressPoll.stop();
+            progressIndicator_Upload.setVisible(false);
+            progressIndicator_Upload.setProgress(-1);
+            hbox_ConnectedNext.setVisible(true);
+            if (succeeded) {
+                ServerResponse<UploadResult> response = (ServerResponse<UploadResult>)uploadTask.getValue();
+                status(response.getResult().statusLine());
+                StringBuffer sb = new StringBuffer(response.getResult().toString()).append("\n\n-----LOG-----\n\n")
+                        .append(response.getLog().toString());
+                textArea_Log.setText(sb.toString());
+            } else {
+                Throwable e = uploadTask.getException();
+                if (e!=null) {
+                    status("Upload failed: " + e.getMessage());
+                    if (e instanceof ServerException)
+                        textArea_Log.setText(((ServerException)e).getLog());
+                    else
+                        textArea_Log.setText("No log is available");
+                }
+                else
+                    status("Upload failed - unknown reason");
+            }
+
+
+            setUploadControlsEnabled(true);
+            button_Upload.setDisable(succeeded);
+
+
+        };
+        uploadTask.setOnSucceeded(event -> cleanup.accept(event,true));
+        uploadTask.setOnFailed(event -> cleanup.accept(event,false));
+
+        //Schedule the task and let 'er run!
+        Thread backgroundThread = new Thread(uploadTask);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+        progressPoll.play();
+    }
+
+    private void queueUpload()
+    {
+        //See if MIME type can be determined
+        String filename = textField_Filename.getText();
+        String contenttype=null;
+        try {
+            contenttype = Files.probeContentType(new File(filename).toPath());
+        } catch (Exception e) {
+            showMessage(String.format("Could not determine MIME type for %s (Exception %s)",
+                    filename,e.getMessage()));
+            return;
+        }
+        if (contenttype==null) {
+            showMessage(String.format("Could not determine MIME type for %s (probe returned null)",
+                    filename));
+        }
+
+
+        textArea_Log.clear();
+        //Check if there are tags defined
+        if (listView_Pairs.getItems().size()==0 && !confirmYesOrNo("There are no tag assignments. Upload anyway?"))
+            return;
 
         //Disable the upload button and all the fields
         setUploadControlsEnabled(false);

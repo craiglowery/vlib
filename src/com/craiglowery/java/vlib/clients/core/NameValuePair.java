@@ -38,4 +38,9 @@ public class NameValuePair implements Comparable<NameValuePair>{
         if (other==null) return 1;
         return  display.compareTo(other.display);
     }
+
+    @Override
+    public Object clone() {
+        return new NameValuePair(name,value);
+    }
 }

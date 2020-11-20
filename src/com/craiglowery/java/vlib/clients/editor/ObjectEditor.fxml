@@ -2,8 +2,16 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="gp_ROOT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-          prefHeight="600.0" prefWidth="1400.0" stylesheets="@../core/Main.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1"
+<GridPane fx:id="gp_ROOT"
+          maxHeight="-Infinity"
+          maxWidth="-Infinity"
+          minHeight="-Infinity"
+          minWidth="-Infinity"
+          prefHeight="600.0"
+          prefWidth="1400.0"
+          stylesheets="@../core/Main.css"
+          xmlns="http://javafx.com/javafx/null"
+          xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="com.craiglowery.java.vlib.clients.editor.ObjectEditorController">
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="0">

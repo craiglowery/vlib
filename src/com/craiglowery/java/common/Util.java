@@ -545,5 +545,13 @@ public class Util {
         }
         return sb.toString();
     }
+
+    public static String encodeUrl(String url) {
+        url=url.replace("%","%25");
+        url=url.replace(" ","%20");
+        url=url.replace("+","%2B");
+        return url;
+    }
+
 }
 
