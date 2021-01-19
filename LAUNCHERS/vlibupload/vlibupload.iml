@@ -8,8 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="vlib" />
-    <orderEntry type="library" name="com.mashape.unirest:unirest-java:1.4.9" level="project" />
     <orderEntry type="library" name="Java FX lib" level="project" />
     <orderEntry type="library" name="lib" level="application" />
+    <orderEntry type="library" name="com.mashape.unirest:unirest-java:1.4.9" level="project" />
   </component>
 </module>

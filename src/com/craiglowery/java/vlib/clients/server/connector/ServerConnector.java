@@ -1,6 +1,7 @@
 package com.craiglowery.java.vlib.clients.server.connector;
 
 import com.craiglowery.java.common.Util;
+import com.craiglowery.java.vlib.clients.core.CommonValues;
 import com.craiglowery.java.vlib.clients.core.NameValuePair;
 import com.craiglowery.java.vlib.clients.core.Tag;
 import com.craiglowery.java.vlib.clients.upload.*;
@@ -316,7 +317,7 @@ public class ServerConnector {
                 l.log("The key is: " + key);
                 l.status("Copying chunks");
                 //Read 5MB chunks and send, also computing checksum
-                final int BUFSZ = 1024 * 1024 * 5;
+                final int BUFSZ = CommonValues.DEFAULT_UPLOAD_BUFFER_SIZE;
                 final byte[] buf = new byte[BUFSZ];
                 int bytesread = 0;
                 long offset = 0;

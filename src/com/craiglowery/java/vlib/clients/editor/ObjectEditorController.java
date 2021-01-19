@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 
@@ -186,6 +187,10 @@ public class ObjectEditorController implements Initializable, Observer {
             }
         });
 
+        final Instant[] lastDigitActionOccurred = new Instant[]{Instant.ofEpochMilli(0)};
+        final Instant[] lastClearOccurred = new Instant[]{Instant.ofEpochMilli(0)};
+        final Boolean[] clearIsPrimed = new Boolean[]{false};
+
         //Wire a keyboard listener and contextualize the input according to the type of the cell
         //currently selected
         tvVideos.setOnKeyReleased(
@@ -220,25 +225,95 @@ public class ObjectEditorController implements Initializable, Observer {
                                 final int DECREMENT = 2;
                                 final int EDIT = 3;
                                 final int CLEAR = 4;
+                                final int DIGIT = 5;
                                 int action = 0;
                                 if (event.getText().equals("+")) action=INCREMENT;
                                 else if (event.getText().equals("-")) action=DECREMENT;
                                 else if (event.getCode().equals(KeyCode.DELETE)) action=CLEAR;
                                 else if (event.getCode().equals(KeyCode.F2)) action=EDIT;
+                                else if ("0123456789".contains(event.getText()) && event.getText().length()==1) action=DIGIT;
 
                                 switch (action) {
+                                    case CLEAR:
+                                        //Determine if this is a valid (fresh) CLEAR request
+                                        Instant now = Instant.now();
+                                        Instant lastClearInstant = lastClearOccurred[0];
+                                        lastClearOccurred[0] = Instant.now();
+                                        Instant cutoff = now.minusMillis(600);
+                                        if (lastClearOccurred[0].compareTo(cutoff)>=0) {
+                                            //This is a fresh CLEAR request
+                                            //If the trigger isn't primed, then prime it
+                                            if (!clearIsPrimed[0])
+                                                clearIsPrimed[0]=true;
+                                            else {
+                                                //Else do the clear
+                                                v.untag(columnName);
+                                                clearIsPrimed[0]=false;
+                                            }
+                                        } else {
+                                            clearIsPrimed[0]=false;
+                                        }
+                                        break;
+                                    case DIGIT:  //Digit only works for sequence tags
+                                                 // 1. that are empty
+                                                 // 2. or where digit was used less than 2 seconds ago
+                                        if (tagdefs.getTag(columnName).type == Tag.TagType.SEQUENCE) {
+                                            try {
+                                                String s = v.getTagValueString(columnName);
+                                                if (s==null)
+                                                    s="";
+                                                else s=s.trim();
+                                                int digit = event.getText().charAt(0) - '0';
+                                                long value = 0;
+                                                now = Instant.now();
+                                                if (s.equals("")) {
+                                                    //The field is empty.  The new value is simply the digit
+                                                    value = digit;
+                                                } else /* something is already in the field */ {
+                                                    cutoff= now.minusSeconds(2);
+                                                    if (lastDigitActionOccurred[0].compareTo(cutoff)<0)
+                                                    throw new Exception("Too old");
+                                                    //Try to parse the current value
+                                                    long l = Long.parseLong(s);
+                                                    //Multiple by ten and add the digit
+                                                    value = (l * 10) + digit;
+                                                }
+                                                //Update the value and reset the timer
+                                                v.untag(columnName);
+                                                v.tag(columnName, Long.toString(value));
+                                                lastDigitActionOccurred[0] = now;
+                                            } catch (Exception e) {
+                                                lastDigitActionOccurred[0]= Instant.ofEpochMilli(0);
+                                                //DIGIT didn't work for some reason
+                                            }
+                                        }
+                                        break;
                                     case INCREMENT:
                                     case DECREMENT:
-                                        //If it is a sequenced tag, increment or decrement the integer
+                                        //If it is a sequenced tag
                                         if (tagdefs.getTag(columnName).type == Tag.TagType.SEQUENCE) {
                                             String s = v.getTagValueString(columnName);
-                                            try {
-                                                long l = Long.parseLong(s);
-                                                l += action == INCREMENT ? 1 : -1;
-                                                v.untag(columnName);
-                                                v.tag(columnName, Long.toString(l));
-                                            } catch (Exception e) {
-                                                //Can't parse as an integer or tag failed
+                                            if (s==null)
+                                                s="";
+                                            else
+                                                s=s.trim();
+                                            //If there is a value there
+                                            if (!s.equals("")) {
+                                                try {
+                                                    long l = Long.parseLong(s);
+                                                    l += action == INCREMENT ? 1 : -1;
+                                                    v.untag(columnName);
+                                                    v.tag(columnName, Long.toString(l));
+                                                } catch (Exception e) {
+                                                    //Can't parse as an integer or tag failed
+                                                }
+                                            } else /* there is no value there */ {
+                                                try {
+                                                    v.untag(columnName);
+                                                    v.tag(columnName,"0");
+                                                } catch (Exception e) {
+                                                    //tag failed for some reason
+                                                }
                                             }
                                         }
                                         //If it is a category tag, cycle through the list

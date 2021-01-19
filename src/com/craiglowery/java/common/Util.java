@@ -1,6 +1,8 @@
 package com.craiglowery.java.common;
 
 
+import com.craiglowery.java.vlib.clients.core.NameValuePair;
+import com.craiglowery.java.vlib.clients.core.NameValuePairList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -14,12 +16,20 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static java.time.LocalDate.of;
 
 /**
  * Created by Craig on 4/16/2016.
@@ -183,8 +193,65 @@ public class Util {
         return removeExtension(filename)+extension;
     }
 
+    /**
+     * Removes unprintable characters, then encodes ? / :
+     * as ##0xFF## where FF is the hex code from the ascii table
+     * @param s
+     * @return
+     */
+    public static String encodeIllegalFileCharacters(String s) {
+
+        StringBuffer to = new StringBuffer();
+
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case '?':
+                case ':':
+                case '/':
+                case '"':
+                    to.append(String.format("##0x%02X##",(int)c));
+                    break;
+                default:
+                    to.append(c);
+            }
+        }
+        return to.toString();
+    }
+
+    /**
+     * Parses a string of hexadecimal characters and converts it to an int.
+     * There should be no prefix like 0x.  For example an input value of
+     * "FF" or "ff" returns 255.
+     * @param s  The hex string to parse.
+     * @return
+     */
+    public static int parseHex(String s) {
+        int result=0;
+        for (char c : s.toUpperCase().toCharArray()) {
+            result = result << 4;
+            if (c>='0' && c<='9')
+                result += (int)c - (int)'0';
+            else if (c>='A' && c<='F')
+                result += 10 + (int)c - (int)'A';
+            else
+                throw new Error("Not a hexit: "+c);
+        }
+        return result;
+    }
+
+    final static Pattern codedCharacterPattern = Pattern.compile("^(.*)##0x([0-9A-F][0-9A-F])##(.*)$");
+
+    public static String decodeIllegalFileCharacters(String s) {
 
 
+        do {
+            Matcher m = codedCharacterPattern.matcher(s);
+            if (!m.matches()) break;
+            s=m.group(1)+Character.toString(parseHex(m.group(2)))+m.group(3);
+        } while (true);
+
+        return s;
+    }
 
 
     /**
@@ -221,11 +288,11 @@ public class Util {
     }
 
     public static String nw(String s) {
-        return s==null?s:"";
+        return s==null?"":s;
     }
 
     public static String nwp(String s) {
-        return s==null?s:"(null)";
+        return s==null?"(null)":s;
     }
 
     static private Pattern RE_SEQUENCE_INTEGER_LETTER = Pattern.compile("^(\\d+)([a-z])$");
@@ -530,6 +597,11 @@ public class Util {
      * @param handle
      * @return A string value which is the relative path to the handle's directory.
      */
+    /**
+     * Returns the handles directory path, which should be evaluated relative to SMB_ROOT
+     * @param handle
+     * @return A string value which is the relative path to the handle's directory.
+     */
     public static String pathToSmbHandleDir(int handle) {
         //Create links in the handle links area
         //
@@ -538,11 +610,14 @@ public class Util {
         //   smb/handles/E/D/C/B/A/handle
         //
         StringBuffer sb = new StringBuffer("handles/E/D/C/B/A");
-        handle /= 1000;
-        for (int idx=8; idx<sb.length(); idx+=2) {
-            sb.setCharAt(idx, (char)('0'+(handle%10)));
+
+        int ptr = sb.indexOf("E/");
+        for (int count=0; count<5; count++) {
+            sb.setCharAt(ptr,(char)('0'+handle%10));
             handle /= 10;
+            ptr += 2;
         }
+
         return sb.toString();
     }
 
@@ -552,6 +627,93 @@ public class Util {
         url=url.replace("+","%2B");
         return url;
     }
+
+    public static Map<String,String> parseMetaFile(String metaFilePath) throws Exception {
+        File metaFile = new File(metaFilePath);
+        if (!metaFile.exists())
+            throw new Exception("No meta.txt file found at " + metaFilePath);
+
+        class CraigError extends Error {
+            public CraigError(String message) {
+                super(message);
+            }
+        }
+
+        Pattern metaPattern = Pattern.compile("^([^=]+)=([^=]+)$");
+        Map<String,String> map = new HashMap<>();
+
+        try (java.io.BufferedReader reader = new BufferedReader(new FileReader(metaFile))) {
+            //The first line should be the sentinel
+            String meta = reader.readLine().trim();
+            if (!meta.equals("[meta]"))
+                throw new Exception("Meta file in " + metaFilePath + " first line must be '[meta]'");
+            //subsequent lines are NameValuePairs
+            final Integer[] lineNo = new Integer[]{1};
+            reader.lines().forEach(line -> {
+                lineNo[0]++;
+                if (!line.trim().equals("")) {  //Skip any empty lines
+                    Matcher matcher = metaPattern.matcher(line);
+                    if (!matcher.matches())
+                        throw new CraigError(String.format("%s line %d: Not a well-formed name=value pair", metaFile.getAbsolutePath(), lineNo[0]));
+                    //TODO: Validate name=value here
+                    map.put(matcher.group(1), matcher.group(2));
+                }
+            });
+        } catch (CraigError e) {
+            throw new Exception(e.getMessage());
+        }
+        return map;
+    }
+
+    private static SimpleDateFormat yearPattern = new SimpleDateFormat("yyyy");
+    public static int getYear(java.util.Date date) {
+        return Integer.parseInt(yearPattern.format(date));
+    }
+
+    private static Pattern patternYYYYMMDD = Pattern.compile("^(\\d{4,4})[-/](\\d{1,2})[-/](\\d{1,2})$");
+    private static Pattern patternMMDDYYYY = Pattern.compile("^(\\d{1,2})[-/](\\d{1,2})[-/](\\d{4,4})$");
+
+    public enum DateFormats {YYYYMMDD, MMDDYYYY, MMDDYY};
+
+    public static java.util.Date parseDate(String dateString, DateFormats format) throws Exception {
+        if (dateString==null)
+            return null;
+        try {
+            int mgroup, dgroup, ygroup;
+            Pattern pattern;
+            switch (format) {
+                case YYYYMMDD:
+                    ygroup=1;
+                    mgroup=2;
+                    dgroup=3;
+                    pattern=patternYYYYMMDD;
+                    break;
+                case MMDDYYYY:
+                    mgroup=1;
+                    dgroup=2;
+                    ygroup=3;
+                    pattern=patternMMDDYYYY;
+                    break;
+                default:
+                    throw new Exception("Unknown format enum value");
+            }
+            Matcher matcher = pattern.matcher(dateString);
+            if (!matcher.matches())
+                throw new Exception(String.format("Can't parse %s as %s",dateString,format.toString()));
+            int month = Integer.parseInt(matcher.group(mgroup));
+            int day = Integer.parseInt(matcher.group(dgroup));
+            int year = Integer.parseInt(matcher.group(ygroup));
+            return Date.from(LocalDate.of(year,month,day).atStartOfDay(ZoneId.of("GMT")).toInstant());
+                    } catch (Exception e) {
+            throw new Exception("Could not parse "+dateString,e);
+        }
+    }
+
+    public static Path blobDirectory(Path root, String blobkey) {
+         return root.resolve(blobkey.substring(1,2)).resolve(blobkey.substring(3,4)).resolve(blobkey.substring(5,6));
+    }
+
+
 
 }
 

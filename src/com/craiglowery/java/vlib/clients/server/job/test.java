@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -25,7 +26,10 @@ public class test {
 
     public static void main(String[] args) {
         try {
-            new test("F:\\VPS\\South Park");
+            //new test("F:\\VPS\\Discovery");
+            new test("F:\\VPS\\WandaVision");
+            //new test("F:\\VPS\\Pandora\\Season 2");
+
         } catch (Exception e) {
             e.printStackTrace();
             Application.GetApplication().terminate();
@@ -68,46 +72,17 @@ public class test {
                     }
                 });
 
-                //jm.setRunDepth(1);
+                jm.setRunDepth(3);
+
+                String metaFilePath = directory.toPath().resolve("meta.txt").toString();
 
 
-                File metaFile = directory.toPath().resolve("meta.txt").toFile();
-                if (!metaFile.exists())
-                    throw new Exception("No meta.txt file found in " + pathToDirectory);
+                NameValuePairList nvps = new NameValuePairList(Util.parseMetaFile(metaFilePath));
 
-                class CraigError extends Error {
-                    public CraigError(String message) {
-                        super(message);
-                    }
-                }
-
-                Pattern metaPattern = Pattern.compile("^([^=]+)=([^=]+)$");
-
-                NameValuePairList nvps = new NameValuePairList();
-                try (java.io.BufferedReader reader = new BufferedReader(new FileReader(metaFile))) {
-                    //The first line should be the sentinel
-                    String meta = reader.readLine().trim();
-                    if (!meta.equals("[meta]"))
-                        throw new Exception("Meta file in " + pathToDirectory + " first line must be '[meta]'");
-                    //subsequent lines are NameValuePairs
-                    final Integer[] lineNo = new Integer[]{1};
-                    reader.lines().forEach(line -> {
-                        lineNo[0]++;
-                        if (!line.trim().equals("")) {  //Skip any empty lines
-                            Matcher matcher = metaPattern.matcher(line);
-                            if (!matcher.matches())
-                                throw new CraigError(String.format("%s line %d: Not a well-formed name=value pair", metaFile.getAbsolutePath(), lineNo[0]));
-                            //TODO: Validate name=value here
-                            nvps.add(new NameValuePair(matcher.group(1), matcher.group(2)));
-                        }
-                    });
-                } catch (CraigError e) {
-                    throw new Exception(e.getMessage());
-                }
 
                 //The Series tag is required
                 if (!nvps.isNameDefined("Series"))
-                    throw new Exception(String.format("File %s: value for name 'Series' is required", metaFile.getName()));
+                    throw new Exception(String.format("File %s: value for name 'Series' is required", metaFilePath));
 
                 Pattern fileNamePattern = Pattern.compile("^S(\\d\\d)E(\\d\\d)\\s*\\-\\s*(.+)$");
 
@@ -120,7 +95,6 @@ public class test {
                     }
 
                     Matcher matcher = fileNamePattern.matcher(name);
-
 
                     String fileName = file.getAbsolutePath().toString();
 
@@ -139,7 +113,7 @@ public class test {
                     jm.introduce(new VlibServerJob_UploadObject(
 
                             fileName,
-                            title,
+                            Util.decodeIllegalFileCharacters(title),
                             Files.probeContentType(new File(fileName).toPath()),
                             null,
                             true,
@@ -166,8 +140,10 @@ public class test {
                         String title = "No title discernable";
                         if (titleMatcher.matches())
                             title = titleMatcher.group(1);
-                        System.out.println("Job " + vlibJob.getDescription() + " caught in main");
-                        try (PrintStream log = new PrintStream(logDirectory.toPath().resolve("" + vlibJob.getId() + " - " + title + ".txt").toFile())) {
+                        //System.out.println("Job " + vlibJob.getDescription() + " caught in main");
+                        String logFileName = "" + vlibJob.getId() + " - " + Util.encodeIllegalFileCharacters(title);
+                        logFileName = logFileName.substring(0,Integer.min(30,logFileName.length()));
+                        try (PrintStream log = new PrintStream(logDirectory.toPath().resolve( logFileName+ ".txt").toFile())) {
                             log.println(vlibJob.toString());
                             switch (vlibJob.getState()) {
                                 //------------------------------------------------------------
