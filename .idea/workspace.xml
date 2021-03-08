@@ -6,56 +6,12 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Mass upload directories working. Before tvdb additions.">
-      <change afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com_fasterxml_jackson_core_jackson_databind_2_11_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com_mashape_unirest_unirest_java_1_4_91.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com_mashape_unirest_unirest_java_1_4_92.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/postgresql_42_2_18.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/github_token" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/DeleteEmptyDirs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/FinalBoolean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/ObjectMetaWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/Sha1FileTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/TheTvDb.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/TheTvDbEpisode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/TheTvDbSeries.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/apiv3/TheTvDbApiV3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/apiv4/TheTvDbApiV4.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/backup/BackupDB.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/backup/VlibBackup.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/CommonValues.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/thetvdb_api_key" afterDir="false" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Backup system.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LAUNCHERS/vlibupload/vlibupload.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util$MessageBoxChoices.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util$MessageBoxChoices.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/common/Util.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$7.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$8.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$9.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$HttpMethod.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$HttpMethod.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$UpdateRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector$UpdateRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/vlib/com/craiglowery/java/vlib/clients/server/connector/ServerConnector.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/common/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/common/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/jobmgr/test.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/NameValuePairList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/core/NameValuePairList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/apiv3/TheTvDbApiV3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/apiv3/TheTvDbApiV3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/backup/VlibBackup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/backup/VlibBackup.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/editor/ObjectEditorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/connector/ServerConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/connector/ServerConnector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vlib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/vlib.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/UploadServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -674,7 +630,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.VlibBackup">
+  <component name="RunManager" selected="Application.ObjectEditor">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -749,6 +705,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="UploadServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.craiglowery.java.vlib.clients.server.job.UploadServer" />
+      <module name="vlib" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.craiglowery.java.jobmgr.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="VlibBackup" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.craiglowery.java.vlib.clients.backup.VlibBackup" />
       <module name="vlib" />
@@ -769,27 +739,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.craiglowery.java.vlib.clients.server.job.test" />
-      <module name="vlib" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.craiglowery.java.jobmgr.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -847,20 +805,20 @@
     </configuration>
     <list>
       <item itemvalue="Application.TheTvDbApiV3" />
-      <item itemvalue="Application.test" />
       <item itemvalue="Application.UploadClient" />
       <item itemvalue="Application.VlibBackup" />
       <item itemvalue="Application.ObjectEditor" />
       <item itemvalue="Application.DeleteEmptyDirs" />
+      <item itemvalue="Application.UploadServer" />
       <item itemvalue="JAR Application.EditPackage" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.VlibBackup" />
-        <item itemvalue="Application.test" />
-        <item itemvalue="Application.DeleteEmptyDirs" />
         <item itemvalue="Application.ObjectEditor" />
+        <item itemvalue="Application.UploadServer" />
         <item itemvalue="Application.UploadClient" />
+        <item itemvalue="Application.VlibBackup" />
+        <item itemvalue="Application.DeleteEmptyDirs" />
       </list>
     </recent_temporary>
   </component>
@@ -921,7 +879,15 @@
       <workItem from="1609438402838" duration="50851000" />
       <workItem from="1609870785705" duration="20487000" />
       <workItem from="1610483351446" duration="1868000" />
-      <workItem from="1610831931718" duration="4047000" />
+      <workItem from="1610831931718" duration="9448000" />
+      <workItem from="1611844725435" duration="45000" />
+      <workItem from="1611942281074" duration="932000" />
+      <workItem from="1612559443771" duration="152000" />
+      <workItem from="1612559601792" duration="3973000" />
+      <workItem from="1613330528276" duration="2487000" />
+      <workItem from="1613786149123" duration="1444000" />
+      <workItem from="1614376486873" duration="1883000" />
+      <workItem from="1614965989801" duration="2910000" />
     </task>
     <task id="LOCAL-00001" summary="Functioning VLIB before work to create upload queue.">
       <created>1596393194411</created>
@@ -958,7 +924,14 @@
       <option name="project" value="LOCAL" />
       <updated>1605896922941</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Backup system.">
+      <created>1611076150239</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1611076150240</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -969,7 +942,8 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <MESSAGE value="Functioning VLIB before work to create upload queue." />
     <MESSAGE value="Mass upload directories working. Before tvdb additions." />
-    <option name="LAST_COMMIT_MESSAGE" value="Mass upload directories working. Before tvdb additions." />
+    <MESSAGE value="Backup system." />
+    <option name="LAST_COMMIT_MESSAGE" value="Backup system." />
   </component>
   <component name="WindowStateProjectService">
     <state x="400" y="376" key="#SQL_Resolution_Scopes" timestamp="1609366320949">
@@ -984,10 +958,6 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="414" y="177" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1610220471472" />
-    <state x="710" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606230959190">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="710" y="322" key="#com.intellij.fileTypes.FileTypeChooser/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1606230959190" />
     <state x="765" y="226" key="#com.intellij.ide.util.MemberChooser" timestamp="1610225895309">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -996,85 +966,77 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="689" y="310" key="#com.intellij.ide.util.TreeClassChooserDialog/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1609361075796" />
-    <state x="690" y="274" key="#com.intellij.util.ui.classpath.ChooseLibrariesDialog" timestamp="1606237076289">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="690" y="274" key="#com.intellij.util.ui.classpath.ChooseLibrariesDialog/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1606237076289" />
-    <state x="881" y="273" width="683" height="494" key="#xdebugger.XInspectDialog" timestamp="1605218447330">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="881" y="273" width="683" height="494" key="#xdebugger.XInspectDialog/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605218447330" />
     <state x="2146" y="215" width="1014" height="642" key="#xdebugger.evaluate" timestamp="1610230629814">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
     <state x="2146" y="215" width="1014" height="642" key="#xdebugger.evaluate/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1610230629814" />
-    <state x="524" y="88" key="CommitChangelistDialog2" timestamp="1605896922026">
+    <state x="524" y="88" key="CommitChangelistDialog2" timestamp="1611076147346">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="524" y="88" key="CommitChangelistDialog2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605896922026" />
+    <state x="524" y="88" key="CommitChangelistDialog2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611076147346" />
     <state x="740" y="275" width="694" height="674" key="FileChooserDialogImpl" timestamp="1609787962999">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" width="694" height="674" key="FileChooserDialogImpl/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1609787962999" />
-    <state width="1877" height="337" key="GridCell.Tab.0.bottom" timestamp="1611074487096">
+    <state width="1860" height="301" key="GridCell.Tab.0.bottom" timestamp="1615217958647">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="337" key="GridCell.Tab.0.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487096" />
+    <state width="1860" height="301" key="GridCell.Tab.0.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615217958647" />
     <state width="1860" height="315" key="GridCell.Tab.0.bottom/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609701529500" />
-    <state width="1877" height="337" key="GridCell.Tab.0.center" timestamp="1611074487096">
+    <state width="1860" height="301" key="GridCell.Tab.0.center" timestamp="1615217958647">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="337" key="GridCell.Tab.0.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487096" />
+    <state width="1860" height="301" key="GridCell.Tab.0.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615217958647" />
     <state width="1860" height="315" key="GridCell.Tab.0.center/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609701529500" />
-    <state width="1877" height="337" key="GridCell.Tab.0.left" timestamp="1611074487096">
+    <state width="1860" height="301" key="GridCell.Tab.0.left" timestamp="1615217958646">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="337" key="GridCell.Tab.0.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487096" />
+    <state width="1860" height="301" key="GridCell.Tab.0.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615217958646" />
     <state width="1860" height="315" key="GridCell.Tab.0.left/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609701529500" />
-    <state width="1877" height="337" key="GridCell.Tab.0.right" timestamp="1611074487096">
+    <state width="1860" height="301" key="GridCell.Tab.0.right" timestamp="1615217958647">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="337" key="GridCell.Tab.0.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487096" />
+    <state width="1860" height="301" key="GridCell.Tab.0.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615217958647" />
     <state width="1860" height="315" key="GridCell.Tab.0.right/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609701529500" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.bottom" timestamp="1611074487512">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.bottom" timestamp="1611526486111">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487512" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486111" />
     <state width="1860" height="334" key="GridCell.Tab.1.bottom/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.center" timestamp="1611074487511">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.center" timestamp="1611526486110">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487511" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486110" />
     <state width="1860" height="334" key="GridCell.Tab.1.center/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.left" timestamp="1611074487511">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.left" timestamp="1611526486110">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487511" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486110" />
     <state width="1860" height="334" key="GridCell.Tab.1.left/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158091" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.right" timestamp="1611074487511">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.right" timestamp="1611526486110">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.1.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074487511" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.1.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486110" />
     <state width="1860" height="334" key="GridCell.Tab.1.right/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.bottom" timestamp="1611074491946">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.bottom" timestamp="1611526486112">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074491946" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.bottom/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486112" />
     <state width="1860" height="334" key="GridCell.Tab.2.bottom/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158093" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.center" timestamp="1611074491945">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.center" timestamp="1611526486111">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074491945" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.center/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486111" />
     <state width="1860" height="334" key="GridCell.Tab.2.center/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.left" timestamp="1611074491945">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.left" timestamp="1611526486111">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074491945" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.left/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486111" />
     <state width="1860" height="334" key="GridCell.Tab.2.left/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.right" timestamp="1611074491946">
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.right" timestamp="1611526486112">
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
-    <state x="1920" y="-2" width="1877" height="337" key="GridCell.Tab.2.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611074491946" />
+    <state x="1920" y="-2" width="1877" height="184" key="GridCell.Tab.2.right/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611526486112" />
     <state width="1860" height="334" key="GridCell.Tab.2.right/1920.-2.1920.1040/0.0.1920.1040@1920.-2.1920.1040" timestamp="1609624158092" />
     <state width="1877" height="338" key="GridCell.Tab.3.bottom" timestamp="1609438414486">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -1104,10 +1066,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="200" height="441" key="SqlResolveConfigurable/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1609366292282" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1605896933846">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1611076168210">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1605896933846" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611076168210" />
     <state x="816" y="153" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1609366196041">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -1353,14 +1315,10 @@
       <screen x="1920" y="-2" width="1920" height="1040" />
     </state>
     <state x="1920" y="-2" width="1893" height="332" key="dock-window-9/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1609361407353" />
-    <state x="425" y="113" width="1139" height="840" key="find.popup" timestamp="1606264614919">
+    <state x="342" y="117" key="new project wizard" timestamp="1611844765371">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="425" y="113" width="1139" height="840" key="find.popup/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1606264614919" />
-    <state x="342" y="117" key="new project wizard" timestamp="1609355730736">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="342" y="117" key="new project wizard/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1609355730736" />
+    <state x="342" y="117" key="new project wizard/1920.-2.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1611844765371" />
     <state x="616" y="240" key="run.anything.popup" timestamp="1610225587931">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -1394,7 +1352,7 @@
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/test.java</url>
+          <url>file://$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/server/job/UploadServer.java</url>
           <line>79</line>
           <option name="timeStamp" value="87" />
         </line-breakpoint>
@@ -1405,7 +1363,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/com/craiglowery/java/thetvdb/apiv3/TheTvDbApiV3.java</url>
-          <line>168</line>
+          <line>169</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1417,11 +1375,6 @@
           <url>file://$PROJECT_DIR$/src/com/craiglowery/java/common/DeleteEmptyDirs.java</url>
           <line>39</line>
           <option name="timeStamp" value="144" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/craiglowery/java/vlib/clients/backup/VlibBackup.java</url>
-          <line>379</line>
-          <option name="timeStamp" value="145" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

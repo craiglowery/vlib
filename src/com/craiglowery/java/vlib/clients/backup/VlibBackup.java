@@ -281,7 +281,13 @@ public class VlibBackup {
                     jobNumber, object.title,object.handle,object.imported,object.blobkey);
             if (threadAware)
                 Thread.currentThread().setName(threadName+" [init]");
-            String volume = volumeChooser.get();
+            String volume=null;
+            if (object.backupvolumeuuid==null || object.backupvolumeuuid.equals("")) {
+                log("INFORMATION: %s was previously backed up to (%s,%s) -> overwritting",object.handle,object.backupvolumeuuid,volume);
+                volume=backupVolumesByVolumeUUID.get(object.backupvolumeuuid).backupvolumelabel;
+            }
+            if (volume==null)
+                volume = volumeChooser.get();
             object.backupvolumeuuid= backupVolumesByVolumeLabel.get(volume).backupvolumeuuid;
             if (object.backupvolumeuuid==null)
                 log("WARNING: Missing UUID for volume '%s'",volume);

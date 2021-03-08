@@ -13,21 +13,19 @@ import com.sun.glass.ui.Application;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class test {
+public class UploadServer {
 
 
     public static void main(String[] args) {
         try {
             //new test("F:\\VPS\\Discovery");
-            new test("F:\\VPS\\WandaVision");
+            new UploadServer("F:\\VPS\\WandaVision");
             //new test("F:\\VPS\\Pandora\\Season 2");
 
         } catch (Exception e) {
@@ -36,7 +34,7 @@ public class test {
         }
     }
 
-    public test(String pathToDirectory) throws Exception {
+    public UploadServer(String pathToDirectory) throws Exception {
 
 
 

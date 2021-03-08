@@ -955,6 +955,10 @@ public class ObjectEditorController implements Initializable, Observer {
         tvVideos.getItems().clear();
         tvVideos.getItems().addAll(videos.values());
 
+        //The first column is used to hold a checkbox which, when checked, deletes the object on that row if an update
+        //is performed.
+        //TableColumn<Video,>
+
         //The first column is used to indicate when a row is "dirty" (needs to be updated)
         //It will show an asterisk when the row has been changed and has not yet been
         //posted back to the database.

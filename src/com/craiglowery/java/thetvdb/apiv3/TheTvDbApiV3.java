@@ -4,6 +4,7 @@ import com.craiglowery.java.thetvdb.TheTvDb;
 import com.craiglowery.java.thetvdb.TheTvDbEpisode;
 import com.craiglowery.java.thetvdb.TheTvDbSeries;
 import com.craiglowery.java.vlib.clients.core.NameValuePairList;
+import com.craiglowery.java.vlib.clients.server.job.UploadServer;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.ObjectMapper;
@@ -303,11 +304,20 @@ public class TheTvDbApiV3 implements TheTvDb {
     }
 
     public static void main(String ... args) {
-        //new TheTvDbApiV3("F:\\VPS\\Discovery");
-        //new TheTvDbApiV3("F:\\VPS\\WandaVision");
-        new TheTvDbApiV3("F:\\VPS\\The Expanse");
-        //new TheTvDbApiV3("F:\\VPS\\Pandora\\Season 2");
+        try {
+            String directory =
+            //"F:\\VPS\\Discovery"
+            "F:\\VPS\\WandaVision"
+            //"F:\\VPS\\The Expanse"
+            //"F:\\VPS\\Pandora\\Season 2"
+            ;
 
+            new TheTvDbApiV3(directory);
+            new UploadServer(directory);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
