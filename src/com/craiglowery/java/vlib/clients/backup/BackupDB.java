@@ -208,9 +208,9 @@ public class BackupDB implements AutoCloseable {
             boolean rollback=true;
             try {
                 statement.execute("BEGIN WORK");
-                String cmd = "SELECT * FROM versions WHERE iscurrent AND "+
+                String cmd = "SELECT * FROM versions WHERE "+
                         "backupstatus=null OR backupstatus='' OR " +
-                        "(backupstatus='%s' AND timebackedup<CURRENT_TIMESTAMP - INTERVAL '1 hour') " + //copying
+                        "(backupstatus='%s' AND timebackedup<CURRENT_TIMESTAMP - INTERVAL '1 day') " + //copying
                         "ORDER BY handle LIMIT 1 FOR UPDATE";
                 cmd = String.format(cmd, BackupStatusType.copying);
                 ResultSet rs = statement.executeQuery(cmd);
@@ -245,10 +245,10 @@ public class BackupDB implements AutoCloseable {
             boolean rollback=true;
             try {
                 statement.execute("BEGIN WORK");
-                String cmd = "SELECT * FROM versions WHERE iscurrent AND ("+
+                String cmd = "SELECT * FROM versions WHERE ("+
                         "backupstatus='%s' OR " +  //copied
                         " (%s) OR " +  //verification failed (optional)
-                        "(backupstatus='%s' AND timeverified<CURRENT_TIMESTAMP - INTERVAL '30 minutes') " + //verifying
+                        "(backupstatus='%s' AND timeverified<CURRENT_TIMESTAMP - INTERVAL '1 day') " + //verifying
                         ") ORDER BY handle LIMIT 1 FOR UPDATE";
                 String retryClause =
                         retry ?

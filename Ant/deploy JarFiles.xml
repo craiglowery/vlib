@@ -1,0 +1,15 @@
+<project name="DeployJarFiles" default="all" >
+    <description>
+        Copies the vlib backup artifact to an external directory.
+    </description>
+
+    <property name="out.dir" location="${basedir}/../out/artifacts" />
+    <property name="dest.dir" location="C:/users/craig/jar" />
+
+    <target name="copy.backup">
+        <copyfile forceoverwrite="true" src="${out.dir}/vlibbackup_jar/vlibbackup.jar" dest="${dest.dir}\vlibbackup.jar"/>
+    </target>
+
+    <target name="all" depends="copy.backup">
+    </target>
+</project>

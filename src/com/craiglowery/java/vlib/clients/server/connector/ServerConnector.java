@@ -4,6 +4,7 @@ import com.craiglowery.java.common.Util;
 import com.craiglowery.java.vlib.clients.core.CommonValues;
 import com.craiglowery.java.vlib.clients.core.NameValuePair;
 import com.craiglowery.java.vlib.clients.core.Tag;
+import com.craiglowery.java.vlib.clients.core.Video;
 import com.craiglowery.java.vlib.clients.upload.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -131,11 +132,11 @@ public class ServerConnector {
 
     //---update task----------------------------------------------------------------------------------------------------
     public ServerConnectorTask<ServerResponse<Document>>
-    createUpdateTask(Collection<UpdateRequest> requests) {
+    createUpdateTask(Collection<UpdateRequest> updateRequests, Collection<DeleteRequest> deleteRequests) {
         ServerConnectorTask<ServerResponse<Document>> task = new ServerConnectorTask<ServerResponse<Document>>() {
             @Override
             protected ServerResponse call() throws ServerException {
-                return doUpdate(this,requests);
+                return doUpdate(this,updateRequests, deleteRequests);
             }
         };
         return task;
@@ -513,6 +514,15 @@ public class ServerConnector {
         public Collection<NameValuePair> tags;
     }
 
+    public class DeleteRequest {
+        public long handle;
+        public String imported;
+        public DeleteRequest(Video v) {
+            handle=v.getHandle();
+            imported=v.getImported();
+        }
+    }
+
     public UpdateRequest createUpdateRequest(long handle,Collection<NameValuePair> tags) {
         UpdateRequest r = new UpdateRequest();
         r.handle=handle;
@@ -520,8 +530,14 @@ public class ServerConnector {
         return r;
     }
 
-    public ServerResponse<Document> doUpdate(ServerConnectorTask<ServerResponse<Document>> t, Collection<UpdateRequest> requests) throws ServerException {
-        t.progress(0,requests.size());
+    public DeleteRequest createDeleteRequest(Video v) {
+        return new DeleteRequest(v);
+    }
+
+    public ServerResponse<Document> doUpdate(ServerConnectorTask<ServerResponse<Document>> t,
+                                             Collection<UpdateRequest> updateRequests,
+                                             Collection<DeleteRequest> deleteRequests) throws ServerException {
+        t.progress(0,updateRequests.size());
         Logger l = new Logger(t);
         try {
             Document xml;
@@ -533,31 +549,59 @@ public class ServerConnector {
 
             Element elReport = xml.createElement("update_report");
             xml.appendChild(elReport);
-            Element elSuccess = xml.createElement("succeeded");
-            Element elFailed = xml.createElement("failed");
-            int success = 0;
-            int failure = 0;
-            for (UpdateRequest request : requests) {
+            Element elUpdateSuccess = xml.createElement("update_succeeded");
+            Element elUpdateFail = xml.createElement("update_failed");
+            Element elDeleteSuccess = xml.createElement("delete_succeeded");
+            Element elDeleteFail = xml.createElement("delete_failed");
+            int update_successes = 0;
+            int update_failures = 0;
+            int delete_successes = 0;
+            int delete_failures = 0;
+
+            for (UpdateRequest request : updateRequests) {
                 Element elHandle = xml.createElement("handle");
                 elHandle.setTextContent(String.valueOf(request.handle));
                 try {
                     doUpdateAux(l, request.handle, request.tags);
-                    success++;
-                    elSuccess.appendChild(elHandle);
+                    update_successes++;
+                    elUpdateSuccess.appendChild(elHandle);
                 } catch (ServerException e) {
                     l.log(String.format("Update for handle %d failed - continuing to next update", request.handle));
-                    failure++;
+                    update_failures++;
                     elHandle.setAttribute("failure_reason", e.getRepositoryResponse().getResponseSummary());
-                    elFailed.appendChild(elHandle);
+                    elUpdateFail.appendChild(elHandle);
                 }
-                t.progress(success + failure, requests.size());
+                t.progress(
+                        update_successes + update_failures + delete_successes + delete_failures,
+                        updateRequests.size()+ deleteRequests.size());
             }
-            if (success > 0)
-                elReport.appendChild(elSuccess);
-            if (failure > 0)
-                elReport.appendChild(elFailed);
-            elReport.setAttribute("succeeded", String.valueOf(success));
-            elReport.setAttribute("failed", String.valueOf(failure));
+            for (DeleteRequest request : deleteRequests) {
+                Element elHandle = xml.createElement("handle");
+                elHandle.setTextContent(String.valueOf(request.handle));
+                try {
+                    doDeleteAux(l, request.handle);
+                    delete_successes++;
+                    elDeleteSuccess.appendChild(elHandle);
+                } catch (ServerException e) {
+                    l.log(String.format("Delete for handle %d failed", request.handle));
+                    delete_failures++;
+                    elHandle.setAttribute("failure_reason", e.getRepositoryResponse().getResponseSummary());
+                    elDeleteFail.appendChild(elHandle);
+                }
+                t.progress(
+                        update_successes + update_failures + delete_successes + delete_failures,
+                        updateRequests.size()+ deleteRequests.size());
+            }
+
+            elUpdateSuccess.setAttribute("count",String.valueOf(update_successes));
+            elUpdateFail.setAttribute("count",String.valueOf(update_failures));
+            elDeleteSuccess.setAttribute("count",String.valueOf(delete_successes));
+            elDeleteFail.setAttribute("count",String.valueOf(delete_failures));
+
+            elReport.appendChild(elUpdateSuccess);
+            elReport.appendChild(elUpdateFail);
+            elReport.appendChild(elDeleteSuccess);
+            elReport.appendChild(elDeleteFail);
 
             return new ServerResponse<>(xml, l.toString());
         } catch (Exception e) {
@@ -585,6 +629,39 @@ public class ServerConnector {
         se.prepend(tracer.getStackTrace()[1].getMethodName());
         l.logAndThrow(se);
         return se;  //never happens, but satisfies compiler
+    }
+
+    private void doDeleteAux(Logger l, long handle) throws ServerException {
+        l.status("Creating XML document for handle %s", handle);
+
+        String baseUri = ROOTURI + "/objects/" + String.valueOf(handle) + "/delete";
+        RepositoryResponse rr = null;
+        l.log("Base URI is " + baseUri);
+
+        //Create the query
+
+        URIBuilder builder = null;
+        String query = null;
+        try {
+            builder = new URIBuilder(baseUri);
+            query = builder.build().toString();
+        } catch (Exception e) {
+            throw new ServerException("Failed to build URI and query " + e.getMessage(),e);
+        }
+        l.log("The request is: " + query);
+        l.log("Sending");
+        try {
+            rr = getXmlResponse(HttpMethod.DELETE, query,null);
+        } catch (ServerException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ServerException("Delete request failed", e);
+        }
+        if (rr.getStatusCode()>299) {
+            l.status("Deletion failed = "+rr.getStatusLine());
+            throw new ServerException("Deletion failed - status code not OK");
+        }
+        l.status("Deletion complete");
     }
 
     private void doUpdateAux(Logger l, long handle, Collection<NameValuePair> tags) throws Exception {
@@ -655,6 +732,7 @@ public class ServerConnector {
         rr.enforce200(rr.xml);
         l.status("Update complete");
     }
+
 
     public ServerResponse<Document> doSchema(ServerConnectorTask<ServerResponse<Document>> t) throws ServerException {
         Logger l = new Logger(t);

@@ -1,6 +1,10 @@
 package com.craiglowery.java.vlib.clients.core;
 
 import com.craiglowery.java.common.Util;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -23,6 +27,7 @@ public class Video extends Observable  {
     }
 
     private long handle;
+    private String imported;
     private String title, originalTitle;
     private Map<String,Object> attributes = new HashMap<>();
     private Set<NameValuePair> tags = new HashSet<>();
@@ -33,6 +38,7 @@ public class Video extends Observable  {
     private static XPath xp = XPathFactory.newInstance().newXPath();
     private String stringRepresentation="noset";
     private static Stack<Job> undoStack = new Stack<>();
+    public final BooleanProperty delete = new SimpleBooleanProperty(false);
 
 
     private static XPathExpression xpeAttributes = null;
@@ -97,8 +103,8 @@ public class Video extends Observable  {
             }
         }
 
-        if (!attributes.containsKey("handle") || !attributes.containsKey("title"))
-            throw new Exception("object missing handle and/or title attributes, which are required");
+        if (!attributes.containsKey("handle") || !attributes.containsKey("title") || !attributes.containsKey("imported"))
+            throw new Exception("object missing handle/imported/title attributes, which are required");
         try {
             Object o = attributes.get("handle");
             if (! (o instanceof Long))
@@ -108,6 +114,10 @@ public class Video extends Observable  {
             if (! (o instanceof String))
                 throw new Exception("title attribute must be a String");
             title=(String)o;
+            o=attributes.get("imported");
+            if (! (o instanceof String))
+                throw new Exception("imported attribute must be a String");
+            imported=(String)o;
         } catch (Exception e) {
             throw new Exception("unexpected exception during mapping of mandatory attributes",e);
         }
@@ -129,10 +139,21 @@ public class Video extends Observable  {
                 }
             }
         }
+        delete.addListener(new ChangeListener<>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                setChanged();
+                notifyObservers();
+            }
+        });
+
+
         makeClean();
         computeTitleForDisplay();
         computeTagsForDisplay();
     }
+
+
 
     private void computeTitleForDisplay() {
         stringRepresentation = String.format("%6d - %s",handle,title);
@@ -319,12 +340,17 @@ public class Video extends Observable  {
 
     /** Determines if any changs have been made since constructionl **/
     public boolean isDirty() {
-        return hasDirtyTags() || hasDirtyAttributes();
+        return hasDirtyTags() || hasDirtyAttributes() || delete.getValue();
     }
 
     /** Returns the handle **/
     public long getHandle() {
         return handle;
+    }
+
+    /** Returns the imported key **/
+    public String getImported() {
+        return imported;
     }
 
     /** Returns the title **/
@@ -369,6 +395,7 @@ public class Video extends Observable  {
         );
         tags = new HashSet<>(originalTags);
         title=originalTitle;
+        delete.setValue(false);
         reflectChanges();
     }
 

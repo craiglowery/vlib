@@ -1,10 +1,7 @@
 package com.craiglowery.java.vlib.clients.backup;
 
 
-import com.craiglowery.java.common.FinalBoolean;
-import com.craiglowery.java.common.ObjectMetaWrapper;
-import com.craiglowery.java.common.Sha1FileTest;
-import com.craiglowery.java.common.Util;
+import com.craiglowery.java.common.*;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
@@ -40,7 +37,7 @@ public class VlibBackup {
     public String BACKUP_VOLUME_PREFIX = "VLIBOBJ_";
     public static String UUID_FILE = "vlibobj.backup.uuid";
 
-    private static long SLEEP_INTERVAL = 10000;
+    private static long SLEEP_INTERVAL = 30000;
 
     public static Path pathToServerBlobStore = new File("\\\\jclwhs\\videos\\lib\\blob").toPath();
 
@@ -55,22 +52,26 @@ public class VlibBackup {
     public String user;
     public String password;
 
-    public VlibBackup(String url, String user, String password) throws Exception {
-        //Cache database credentials
-        this.url=url;
-        this.user=user;
-        this.password=password;
+    private static Boolean mutex=true;
 
-        //Find and index backup volumes by volume label and uuid
-        backupVolumesByVolumeLabel = getBackupVolumes(true);
-        backupVolumesByVolumeUUID = new HashMap<>();
-        for (BackupDB.BackupVolume backupVolume : backupVolumesByVolumeLabel.values())
-            backupVolumesByVolumeUUID.put(backupVolume.backupvolumeuuid,backupVolume);
-        if (backupVolumesByVolumeLabel.size() == 0)
-            log("No backup volumes found");
-        else
-            for (String volumeName : backupVolumesByVolumeLabel.keySet())
-               log("%s (%s)", volumeName, backupVolumesByVolumeLabel.get(volumeName).root.getAbsolutePath());
+    public VlibBackup(String url, String user, String password) throws Exception {
+        synchronized (mutex) {
+            //Cache database credentials
+            this.url = url;
+            this.user = user;
+            this.password = password;
+
+            //Find and index backup volumes by volume label and uuid
+            backupVolumesByVolumeLabel = getBackupVolumes(true);
+            backupVolumesByVolumeUUID = new HashMap<>();
+            for (BackupDB.BackupVolume backupVolume : backupVolumesByVolumeLabel.values())
+                backupVolumesByVolumeUUID.put(backupVolume.backupvolumeuuid, backupVolume);
+            if (backupVolumesByVolumeLabel.size() == 0)
+                log("No backup volumes found");
+            else
+                for (String volumeName : backupVolumesByVolumeLabel.keySet())
+                    log("%s (%s)", volumeName, backupVolumesByVolumeLabel.get(volumeName).root.getAbsolutePath());
+        }
     }
 
     private String chooseRandomVolume() {
@@ -341,6 +342,21 @@ public class VlibBackup {
                 //Update database
                 object.backupstatus = BackupDB.BackupStatusType.copied.toString();
                 bdb.commitObjectBackupStatus(object);
+            } catch (Exception e) {
+                object.backupstatus = BackupDB.BackupStatusType.copy_failed.toString();
+                bdb.commitObjectBackupStatus(object);
+                try (StringPrintStream ps = StringPrintStream.create() ) {
+                    e.printStackTrace(ps);
+                    String s =String.format("Copy of object %s on %s (%s,%s) failed: %s",object.blobkey,
+                            bdb.getVolumeByUUID(object.backupvolumeuuid).backupvolumelabel,
+                            object.handle,object.imported,
+                            ps);
+                    log(s);
+                    bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,
+                            object.backupstatus,s);
+
+                    throw e;
+                }
             } finally {
                 //Delete pending files if we failed for some reason
                 Files.deleteIfExists(pathPendingBlob);
@@ -351,80 +367,98 @@ public class VlibBackup {
 
     private void verifyAnObject(boolean threadAware, boolean retry) throws Exception {
         int jobNumber=getNextJobNumber();
+
         try (BackupDB bdb = new BackupDB(url,user,password)) {
-            BackupDB.BackupObject object = bdb.selectObjectForVerification(retry);
-            if (object==null)
-                throw new Exception(NO_OBJECTS_FOR_VERIFY);
-            String threadName = String.format("Verify %d: %s (%d,%s) {%s}",
-                    jobNumber, object.title,object.handle,object.imported,object.blobkey);
-            if (threadAware)
-                Thread.currentThread().setName(threadName+" [init]");
-            BackupDB.BackupVolume backupVolume = backupVolumesByVolumeUUID.get(object.backupvolumeuuid);
-            if (backupVolume==null) {
-                object.backupstatus= BackupDB.BackupStatusType.verification_failed.toString();
+                BackupDB.BackupObject object = bdb.selectObjectForVerification(retry);
+                if (object == null)
+                    throw new Exception(NO_OBJECTS_FOR_VERIFY);
+            try {
+                String threadName = String.format("Verify %d: %s (%d,%s) {%s}",
+                        jobNumber, object.title, object.handle, object.imported, object.blobkey);
+                if (threadAware)
+                    Thread.currentThread().setName(threadName + " [init]");
+                BackupDB.BackupVolume backupVolume = backupVolumesByVolumeUUID.get(object.backupvolumeuuid);
+                if (backupVolume == null) {
+                    object.backupstatus = BackupDB.BackupStatusType.verification_failed.toString();
+                    bdb.commitObjectBackupStatus(object);
+                    String info = String.format("Cant' verify '%s' {%s} (%d,%s) - volumeuuid %s is not mounted",
+                            object.title, object.blobkey, object.handle, object.imported, object.backupvolumeuuid);
+                    bdb.log(object.handle, object.blobkey, object.backupvolumeuuid, object.backupstatus, info);
+                    throw new Exception(info);
+                }
+
+                File root = backupVolume.root;
+
+                log("Verifying '%s' {%s} (%d,%s) <-- %s", object.title, object.blobkey, object.handle, object.imported, root.getAbsolutePath());
+                Path verifyDirectory = Util.blobDirectory(root.toPath().resolve("blob"), object.blobkey);
+                Path pathVerifyBlob = verifyDirectory.resolve(object.blobkey + ".blob");
+                Path pathVerifyMeta = verifyDirectory.resolve(object.blobkey + ".meta");
+
+                //Read the meta file
+                ObjectMetaWrapper objectMetaWrapper = null;
+                try (FileReader fileReader = new FileReader(pathVerifyMeta.toFile())) {
+                    char[] buf = new char[5096];
+                    int length = fileReader.read(buf);
+                    if (length > MAX_META_LENGTH)
+                        throw new Exception("Meta file exceeds maximum expected length");
+                    objectMetaWrapper = new ObjectMetaWrapper(new String(buf, 0, length));
+                } catch (Exception e) {
+                    object.backupstatus = BackupDB.BackupStatusType.verification_failed.toString();
+                    bdb.commitObjectBackupStatus(object);
+                    String info = String.format("Cant' verify '%s' {%s} (%d,%s) - error reading metafile: %s: %s",
+                            object.title, object.blobkey, object.handle, object.imported, e.getClass().getName(), e.getMessage());
+                    bdb.log(object.handle, object.blobkey, object.backupvolumeuuid, object.backupstatus, info);
+                    throw new Exception(info);
+
+                }
+                //Compare sha1 in meta with sha1 in database (object)
+                if (!objectMetaWrapper.getSha1sum().equals(object.sha1sum)) {
+                    object.backupstatus = BackupDB.BackupStatusType.verification_failed.toString();
+                    bdb.commitObjectBackupStatus(object);
+                    String info = String.format("Cant' verify '%s' {%s} (%d,%s) - sha1sum in db and meta file don't agree",
+                            object.title, object.blobkey, object.handle, object.imported, root.getAbsolutePath());
+                    bdb.log(object.handle, object.blobkey, object.backupvolumeuuid, object.backupstatus, info);
+                    throw new Exception(info);
+                }
+                //Compute sha1 for copied object
+                Consumer<Integer> statusUpdate = (percent) -> {
+                    Thread.currentThread().setName(threadName + " [" + percent + "%]");
+                };
+                if (!Sha1FileTest.verifyChecksum(pathVerifyBlob.toFile().getAbsolutePath(), object.sha1sum, statusUpdate)) {
+                    object.backupstatus = BackupDB.BackupStatusType.verification_failed.toString();
+                    bdb.commitObjectBackupStatus(object);
+                    String info = String.format("Verification failed '%s' {%s} (%d,%s) - computed sha1sum from copied file is incorrect",
+                            object.title, object.blobkey, object.handle, object.imported);
+                    bdb.log(object.handle, object.blobkey, object.backupvolumeuuid, object.backupstatus, info);
+                    throw new Exception(info);
+                }
+
+                //Verification has passed
+
+
+                bdb.log(object.handle, object.blobkey, object.backupvolumeuuid, BackupDB.BackupStatusType.verified.toString(), "");
+
+                if (threadAware)
+                    Thread.currentThread().setName(threadName + " [complete]");
+                //Update database
+                object.backupstatus = BackupDB.BackupStatusType.verified.toString();
                 bdb.commitObjectBackupStatus(object);
-                String info = String.format("Cant' verify '%s' {%s} (%d,%s) - volumeuuid %s is not mounted",
-                        object.title,object.blobkey,object.handle,object.imported,object.backupvolumeuuid);
-                bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,object.backupstatus, info );
-                throw new Exception(info);
-            }
-
-            File root = backupVolume.root;
-
-            log("Verifying '%s' {%s} (%d,%s) <-- %s", object.title, object.blobkey, object.handle, object.imported,root.getAbsolutePath());
-            Path verifyDirectory = Util.blobDirectory(root.toPath().resolve("blob"), object.blobkey);
-            Path pathVerifyBlob = verifyDirectory.resolve(object.blobkey + ".blob");
-            Path pathVerifyMeta = verifyDirectory.resolve(object.blobkey + ".meta");
-
-            //Read the meta file
-            ObjectMetaWrapper objectMetaWrapper = null;
-            try (FileReader fileReader = new FileReader(pathVerifyMeta.toFile())) {
-                char[] buf = new char[5096];
-                int length = fileReader.read(buf);
-                if (length >MAX_META_LENGTH)
-                    throw new Exception("Meta file exceeds maximum expected length");
-                objectMetaWrapper= new ObjectMetaWrapper(new String(buf,0,length));
             } catch (Exception e) {
-                object.backupstatus= BackupDB.BackupStatusType.verification_failed.toString();
+                object.backupstatus = BackupDB.BackupStatusType.verification_failed.toString();
                 bdb.commitObjectBackupStatus(object);
-                String info = String.format("Cant' verify '%s' {%s} (%d,%s) - error reading metafile: %s: %s",
-                        object.title,object.blobkey,object.handle,object.imported,e.getClass().getName(),e.getMessage());
-                bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,object.backupstatus,info);
-                throw new Exception(info);
+                try (StringPrintStream ps = StringPrintStream.create() ) {
+                    e.printStackTrace(ps);
+                    String s =String.format("Verification of object %s on %s (%s,%s) failed: %s",object.blobkey,
+                            bdb.getVolumeByUUID(object.backupvolumeuuid).backupvolumelabel,
+                            object.handle,object.imported,
+                            ps);
+                    log(s);
+                    bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,
+                            object.backupstatus,s);
+                    throw e;
+                }
 
             }
-            //Compare sha1 in meta with sha1 in database (object)
-            if (!objectMetaWrapper.getSha1sum().equals(object.sha1sum)) {
-                object.backupstatus= BackupDB.BackupStatusType.verification_failed.toString();
-                bdb.commitObjectBackupStatus(object);
-                String info = String.format("Cant' verify '%s' {%s} (%d,%s) - sha1sum in db and meta file don't agree",
-                        object.title,object.blobkey,object.handle,object.imported,root.getAbsolutePath());
-                bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,object.backupstatus,info);
-                throw new Exception(info);
-            }
-            //Compute sha1 for copied object
-            Consumer<Integer> statusUpdate = (percent) -> {
-                Thread.currentThread().setName(threadName+" ["+percent+"%]");
-            };
-            if (!Sha1FileTest.verifyChecksum(pathVerifyBlob.toFile().getAbsolutePath(),object.sha1sum,statusUpdate)) {
-                object.backupstatus= BackupDB.BackupStatusType.verification_failed.toString();
-                bdb.commitObjectBackupStatus(object);
-                String info = String.format("Verification failed '%s' {%s} (%d,%s) - computed sha1sum from copied file is incorrect",
-                        object.title,object.blobkey,object.handle,object.imported);
-                bdb.log(object.handle,object.blobkey,object.backupvolumeuuid,object.backupstatus,info);
-                throw new Exception(info);
-            }
-
-            //Verification has passed
-
-
-            bdb.log(object.handle,object.blobkey,object.backupvolumeuuid, BackupDB.BackupStatusType.verified.toString(),"");
-
-            if (threadAware)
-                Thread.currentThread().setName(threadName+" [complete]");
-            //Update database
-            object.backupstatus= BackupDB.BackupStatusType.verified.toString();
-            bdb.commitObjectBackupStatus(object);
         }
     }
 
@@ -440,49 +474,68 @@ public class VlibBackup {
     }
 
     private static boolean stopBackgroundWork=false;
-    private void concurrentWorker(Runnable worker, Semaphore semaphore, FinalBoolean goToSleep) {
+
+    /**
+     * Repeatedly runs a task until there is no more work to do, or specifically told to
+     * stop.
+     * @param label        A label for the threads that will be created as children.
+     * @param worker       The code to execute repeatedly.  Should return false when the loop should sleep.
+     * @param concurrency  The maximum number of concurrent threads to allow.
+     */
+    private void concurrentWorker(String label, Supplier<Boolean> worker, int concurrency) {
         final String threadName = Thread.currentThread().getName();
         int subThreadCount=0;
+        FinalBoolean goToSleep = new FinalBoolean(false);
+        Semaphore semaphore = new Semaphore(concurrency);
         log("%s starting",threadName);
 
+        /**
+         * A simple wrapper for the worker that delays it's start for 250ms and releases the semaphore at the
+         * end.
+         */
         Runnable wrapper = new Runnable() {
             @Override
             public void run() {
                 try { Thread.sleep(250); } catch (Exception e){}
-                worker.run();
+                goToSleep.set(!worker.get());
+                semaphore.release();
             }
         };
 
-        try {
-            do {
-                do { //Keep looking for work until there is no more work or asked to stop
+        try {  //Catches semaphore wait interruptions
+            do {  //Loop as long as the master STOP signal isn't set
+                do { //Keep entering the monitor while not being asked to sleep or exit
+                    //Enter the monitor
                     semaphore.acquire();
+                    //Just in case we were asked to stop or go to sleep
                     if (stopBackgroundWork || goToSleep.get()) {
                         semaphore.release();
                         break;
                     }
                     subThreadCount++;
                     final Thread thread = new Thread(wrapper);
-                    log("%s starting subthread %d",threadName,subThreadCount );
+                    //log("%s starting subthread %d",threadName,subThreadCount );
+                    thread.setName(label+" "+subThreadCount);
                     thread.start();
-                    log("%s subthread %d ended",threadName,subThreadCount);
+                    //log("%s subthread %d ended",threadName,subThreadCount);
                     Thread.sleep(1000);   //We always pause between loops
                 } while (!(goToSleep.get() || stopBackgroundWork));
 
+                //We've stopped trying to get into the monitor. If it was because we need to sleep...
                 if (goToSleep.get() && !stopBackgroundWork) {
                     //Sleep for a period and try again, or until we receive a wakeup
+                    goToSleep.set(false);
                     try {
-                        log("%s: going to sleep",threadName);
+                        //log("%s: going to sleep",threadName);
                         Thread.sleep(SLEEP_INTERVAL);
-                        log("%s: waking up",threadName);
-                        goToSleep.set(false);
+                        //log("%s: waking up",threadName);
                     } catch (InterruptedException e) {
                         log("%s: sleep interrupted - waking up",threadName);
                         //Do nothing. We're just going to wake up early.
                     }
                 }
 
-            } while (!stopBackgroundWork);
+            } while (!stopBackgroundWork || semaphore.availablePermits()<concurrency);
         } catch (InterruptedException e) {
             log("%s: interrupted while waiting on semaphore acuisition",threadName);
         }
@@ -495,54 +548,45 @@ public class VlibBackup {
 
     private void concurrentCopy(int n) {
 
-        final Semaphore concurrentCopySemaphore = new Semaphore(n);
-        final FinalBoolean copyGoToSleep = new FinalBoolean(false);
-
-        Runnable runnable = new Runnable() {
+        Supplier<Boolean> worker = new Supplier<>() {
             @Override
-            public void run() {
+            public Boolean get() {
                 try {
                     copyAnObject(true);
                 } catch (Exception e) {
                     if (e.getMessage().equals(NO_OBJECTS_FOR_COPY)) {
-                        log(NO_OBJECTS_FOR_COPY);
-                        copyGoToSleep.set(true);
-                        return;
+                        //log(NO_OBJECTS_FOR_COPY);
+                        return false;
                     }
                     log("Copy of an object failed: %s: %s",e.getClass().getName(),e.getMessage());
-                } finally {
-                    concurrentCopySemaphore.release();
                 }
+                return true;
             }
         };
 
-        concurrentWorker(runnable, concurrentCopySemaphore, copyGoToSleep);
+        concurrentWorker("Copy",worker,n);
     }
 
 
     private void concurrentVerify(int n) {
 
-        Semaphore concurrentVerifySemaphore = new Semaphore(n);
-        final FinalBoolean verifyGoToSleep = new FinalBoolean(false);
 
-        Runnable runnable = new Runnable() {
+        Supplier<Boolean> process = new Supplier<Boolean>() {
             @Override
-            public void run() {
+            public Boolean get() {
                 try {
                     verifyAnObject(true, false);
                 } catch (Exception e) {
                     if (e.getMessage().equals(NO_OBJECTS_FOR_VERIFY)) {
-                        log(NO_OBJECTS_FOR_VERIFY);
-                        verifyGoToSleep.set(true);
-                        return;
+                        //log(NO_OBJECTS_FOR_VERIFY);
+                        return false;
                     }
                     log("Verification of an object failed: %s: %s", e.getClass().getName(), e.getMessage());
-                } finally {
-                    concurrentVerifySemaphore.release();
                 }
+                return true;
             }
         };
-        concurrentWorker(runnable, concurrentVerifySemaphore, verifyGoToSleep);
+        concurrentWorker("Verify",process, n);
     }
 
 
@@ -610,11 +654,15 @@ public class VlibBackup {
                         jd.status,jd.name,jd.title,jd.handle,jd.imported,jd.blobkey));
             }
         }
+        if (stopBackgroundWork)
+            buf.append("\n***SHUTDOWN IN PROGRESS***\n");
         return buf.toString();
     }
 
     public static void main(String ... args) {
         try {
+
+            Semaphore copyThreadCompleted = new Semaphore(0);
             Thread copyThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -624,8 +672,11 @@ public class VlibBackup {
                         log("Concurrent copy threw an exception");
                         e.printStackTrace();
                     }
+                    copyThreadCompleted.release();
                 }
             });
+
+            Semaphore verifyThreadCompleted = new Semaphore(0);
             Thread verifyThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -635,6 +686,7 @@ public class VlibBackup {
                         log("Concurrent verify threw an exception");
                         e.printStackTrace();
                     }
+                    verifyThreadCompleted.release();
                 }
             });
             copyThread.setName("Backup Copier");
@@ -642,36 +694,42 @@ public class VlibBackup {
             verifyThread.setName("Backup Verifier");
             verifyThread.start();
 
-            Thread statusUpdater = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(3000);
-                            updateActiveJobs();
-                        } catch (Exception e){}
+            Thread consoleThread = new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    System.out.print('>');
+                                    System.out.flush();
+                                    char c = (char) System.in.read();
+                                    switch (c) {
+                                        case 's':
+                                            updateActiveJobs();
+                                            System.out.println(getStatusReport());
+                                            break;
+                                        case 't':
+                                            stopBackgroundWork = !stopBackgroundWork;
+                                            System.out.println("Stop background work now = " + stopBackgroundWork);
+                                            break;
+                                        case '\n':
+                                            break;
+                                        default:
+                                            System.out.println("?");
+                                    }
+                                } catch (Exception e) {
+                                    /** ignore **/
+                                }
+                            }
+                        }
                     }
-                }
-            });
+            );
 
-            statusUpdater.start();
+            consoleThread.start();
 
-            while (true ) {
-                System.out.print(">");
-                System.out.flush();
-                char c = (char)System.in.read();
-                switch (c) {
-                    case 's': System.out.println(getStatusReport());
-                        break;
-                    case 't': stopBackgroundWork = !stopBackgroundWork;
-                        System.out.println("Stop background work now = "+stopBackgroundWork);
-                        break;
-                    case '\n':
-                        break;
-                    default:
-                        System.out.println("?");
-                }
-            }
+            copyThread.join();
+            verifyThread.join();
+            System.exit(0);
 
 
         } catch (Exception e) {

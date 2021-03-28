@@ -24,6 +24,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -33,6 +36,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.w3c.dom.Document;
@@ -42,6 +46,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -49,6 +54,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.prefs.BackingStoreException;
 
 import static javafx.scene.control.cell.TextFieldTableCell.forTableColumn;
@@ -398,32 +404,45 @@ public class ObjectEditorController implements Initializable, Observer {
 
     private void doUpdate() {
 
-        LinkedList<ServerConnector.UpdateRequest> requests = new LinkedList<>();
-        boolean anythingDirty=false;
+        LinkedList<ServerConnector.UpdateRequest> updateRequests = new LinkedList<>();
+        LinkedList<ServerConnector.DeleteRequest> deleteRequests = new LinkedList<>();
+        boolean changesDetected=false;
         for (Video v : videos.values()) {
             //Each video is a potential call to update.
             HashSet<NameValuePair> tags = new HashSet<>();
             boolean dirty=false;
-            if (v.hasDirtyAttributes()) {
-                dirty=true;
-                //Update attributes here
-                tags.add(new NameValuePair("title",v.getTitle()));
-            }
-            if (v.hasDirtyTags()) {
-                dirty=true;
-                //Update tags here
-                for ( NameValuePair nvp : v.getTags() )
-                    tags.add(nvp);
-            }
-            if (dirty) {
-                //We'll do the update if it is actually clean
-                anythingDirty=true;
-                ServerConnector.UpdateRequest request = serverConnector.createUpdateRequest(v.getHandle(),tags);
-                requests.add(request);
+            if (v.delete.getValue()) {
+                deleteRequests.add(serverConnector.createDeleteRequest(v));
+                changesDetected=true;
+            } else {
+                if (v.hasDirtyAttributes()) {
+                    dirty = true;
+                    //Update attributes here - right now only "title" is supported
+                    tags.add(new NameValuePair("title", v.getTitle()));
+                }
+                if (v.hasDirtyTags()) {
+                    dirty = true;
+                    //Update tags here
+                    for (NameValuePair nvp : v.getTags())
+                        tags.add(nvp);
+                }
+                if (dirty) {
+                    //We'll do the update if it is actually clean
+                    ServerConnector.UpdateRequest request = serverConnector.createUpdateRequest(v.getHandle(), tags);
+                    updateRequests.add(request);
+                    changesDetected=true;
+                }
             }
         }
-        if (anythingDirty) {
-            performUpdate(requests);
+        if (changesDetected) {
+            if (  deleteRequests.size()  >0) {
+                if (!Util.showConfirmation("WARNING - Objects Will Be Deleted!", "If you proceed with this update, " +
+                        deleteRequests.size() + " objects will be deleted.\n\nProceed?")) {
+                    return;
+                }
+            }
+            performUpdate(updateRequests, deleteRequests);
+
         } else {
             Util.showInformation("Nothing to Do","There are no pending changes");
             resetButtons();
@@ -435,7 +454,8 @@ public class ObjectEditorController implements Initializable, Observer {
 
     private  boolean updateInProgress=false;
 
-    private void performUpdate(Collection<ServerConnector.UpdateRequest> requests)
+    private void performUpdate(Collection<ServerConnector.UpdateRequest> updateRequests,
+                               Collection<ServerConnector.DeleteRequest> deleteRequests)
     {
         if (updateInProgress) {
             Util.showWarning("Warning","Update already in progress");
@@ -449,7 +469,7 @@ public class ObjectEditorController implements Initializable, Observer {
 
         //Create the task
         ServerConnectorTask<ServerResponse<Document>> queryTask =
-                serverConnector.createUpdateTask(requests);
+                serverConnector.createUpdateTask(updateRequests,deleteRequests);
 
 
         Timeline tl = new Timeline();
@@ -465,25 +485,54 @@ public class ObjectEditorController implements Initializable, Observer {
                 try {
                     Util.printXmlDocument(xml,System.err);
                     Element elReport = (Element)xp.evaluate("/update_report", xml, XPathConstants.NODE);
-                    String s_succeededCount = elReport.getAttribute("succeeded");
-                    String s_failedCount =  elReport.getAttribute("failed");
-                    int succeededCount = Integer.valueOf(s_succeededCount);
-                    int failedCount = Integer.valueOf(s_failedCount);
                     //Make all the successful handles clean
-                    NodeList successes = (NodeList)xp.evaluate("/update_report/succeeded/handle",xml, XPathConstants.NODESET);
-                    int x = successes.getLength();
-                    for (int i=0; i<x; i++) {
-                        String sh = ((Element)(successes.item(i))).getTextContent();
+                    NodeList updateSucceeded = (NodeList)xp.evaluate("/update_report/update_succeeded/handle",xml, XPathConstants.NODESET);
+                    NodeList updateFailed = (NodeList)xp.evaluate("/update_report/update_failed/handle",xml, XPathConstants.NODESET);
+                    NodeList deleteSucceeded = (NodeList)xp.evaluate("/update_report/delete_succeeded/handle",xml, XPathConstants.NODESET);
+                    NodeList deleteFailed = (NodeList)xp.evaluate("/update_report/delete_failed/handle",xml, XPathConstants.NODESET);
+
+                    //Mark videos successfully updated as clean
+                    for (int i=0; i<updateSucceeded.getLength(); i++) {
+                        String sh = ((Element)(updateSucceeded.item(i))).getTextContent();
                         long handle = Long.valueOf(sh);
                         Video v = videos.get(handle);
                         if (v!=null)
                             v.makeClean();
                     }
-                    if (failedCount>0)
-                        Util.showError("Some Updates Failed",String.format("Succeeded: %d     Failed: %d",
-                                succeededCount,failedCount));
+
+                    //Delete videos from item list that were successfully deleted from server
+                    for (int i=0; i<deleteSucceeded.getLength(); i++) {
+                        String sh = ((Element)(deleteSucceeded.item(i))).getTextContent();
+                        long handle = Long.valueOf(sh);
+                        Video v = videos.get(handle);
+                        if (v!=null) {
+                            deleteVideoFromCache(v.getHandle());
+                        }
+                    }
+                    if ((deleteFailed.getLength() + updateFailed.getLength()) > 0)
+                        Util.showError("Some Updates Failed",
+                                String.format("Records that could not be updated or deleted have not been modified.\n\n"+
+                                              "Updates succeeded: %d\n"+
+                                              "Updates failed...: %d\n"+
+                                              "Deletions succeeded: %d\n"+
+                                              "Deletions failed: %d",
+                                        updateSucceeded.getLength(),
+                                        updateFailed.getLength(),
+                                        deleteSucceeded.getLength(),
+                                        deleteFailed.getLength()
+                                        ));
                     else {
-                        Util.showInformation("Updates Succeeded", String.format("%s objects were updated", succeededCount));
+                        Util.showInformation("Updates Succeeded",
+                                        String.format("Records that could not be updated or deleted have not been modified.\n\n"+
+                                                "Updates succeeded: %d\n"+
+                                                        "Updates failed...: %d\n"+
+                                                        "Deletions succeeded: %d\n"+
+                                                        "Deletions failed: %d",
+                                                updateSucceeded.getLength(),
+                                                updateFailed.getLength(),
+                                                deleteSucceeded.getLength(),
+                                                deleteFailed.getLength()
+                                        ));
                     }
                     resetButtons();
 
@@ -561,13 +610,20 @@ public class ObjectEditorController implements Initializable, Observer {
                 return;
             } else if (commonTc.getText().toLowerCase().equals("handle")) {
                 //Have they selected the handle column?
-                if (numSelectedCells==1) {
+                if (numSelectedCells == 1) {
                     //If they selected a single handle and right-clicked, do IMDB lookup
                     TablePosition tp = selectedCells.get(0);
-                    IMdBlookup(allvids.get(tp.getRow()),mouseEvent);
+                    IMdBlookup(allvids.get(tp.getRow()), mouseEvent);
                 } else {
                     showMessage("Can only perform IMdB lookup on one handle at a time");
                     return;
+                }
+            } else if (commonTc.getText().toLowerCase().equals("delete")) {
+                if (numSelectedCells == 1) {
+                    TablePosition tp = selectedCells.get(0);
+                    Video video = allvids.get(tp.getRow());
+                    toggleDelete(video);
+
                 }
             } else if (commonTc.getText().toLowerCase().equals("title")) {
 
@@ -622,6 +678,10 @@ public class ObjectEditorController implements Initializable, Observer {
         resetButtons();
     }
 
+    private void toggleDelete(Video v) {
+        v.delete.setValue(!v.delete.getValue());
+        resetButtons();
+    }
 
     private void editTitle(Video v) {
         if (stageTitleEditor==null) {
@@ -955,14 +1015,18 @@ public class ObjectEditorController implements Initializable, Observer {
         tvVideos.getItems().clear();
         tvVideos.getItems().addAll(videos.values());
 
+      //COLUMN 1
         //The first column is used to hold a checkbox which, when checked, deletes the object on that row if an update
         //is performed.
-        //TableColumn<Video,>
+        TableColumn<Video,Boolean> deleteCol = new TableColumn<>("Delete");
+        deleteCol.setCellFactory(CheckBoxTableCell.forTableColumn( (item) -> { return tvVideos.getItems().get(item).delete;}));
+        tableColumns.add(deleteCol);
 
-        //The first column is used to indicate when a row is "dirty" (needs to be updated)
+      //COLUMN 2
+        //The second column is used to indicate when a row is "dirty" (needs to be updated)
         //It will show an asterisk when the row has been changed and has not yet been
         //posted back to the database.
-        TableColumn<Video,String> dirtyCol = new TableColumn<>("*"); //The column header is the "*" symbol itself
+        TableColumn < Video, String > dirtyCol = new TableColumn<>("*"); //The column header is the "*" symbol itself
         //Wire cells in this column the determine their value based on the "isDirty" value of the video
         dirtyCol.setCellValueFactory(
                 cellData -> {
@@ -972,7 +1036,7 @@ public class ObjectEditorController implements Initializable, Observer {
         );
         tableColumns.add(dirtyCol);
 
-
+     //COLUMN 3
         TableColumn<Video, Number> handleCol = new TableColumn<>("Handle");
         handleCol.setCellValueFactory(
                 cellData -> {
@@ -981,6 +1045,8 @@ public class ObjectEditorController implements Initializable, Observer {
                 }
         );
         tableColumns.add(handleCol);
+
+     //COLUMN 4
 
         TableColumn<Video, String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -1032,6 +1098,12 @@ public class ObjectEditorController implements Initializable, Observer {
 
         tvVideos.layout();
         wireColumnHeaders(tvVideos);
+    }
+
+    private void setTableRowBackground(int rowNumber) {
+
+        for (TableColumn tc : tvVideos.getColumns()) {
+        }
     }
 
 
@@ -1113,6 +1185,12 @@ public class ObjectEditorController implements Initializable, Observer {
         stageMassTitleEditor.showAndWait();
         resetButtons();
         tvVideos.refresh();
+    }
+
+    private void deleteVideoFromCache(long handle) {
+        Video video = videos.remove(handle);
+        if (video!=null)
+            tvVideos.getItems().remove(video);
     }
 
 }
